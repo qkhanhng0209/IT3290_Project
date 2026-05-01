@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+env/
+venv/
+*.pyc
+*.pyo
+*.py[cod]
+
+# Environment
+.env
+.env.*
+
+# Database
+*.mdf
+*.ldf
+*.bak
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Flask
+instance/
+.webassets-cache/
+
+# Log
+*.log
