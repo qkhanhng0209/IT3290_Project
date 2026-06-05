@@ -38,6 +38,7 @@ backend/
 ```
 
 Mỗi thành viên chỉ làm việc trên module được phân công.
+Cài đặt những thư viện trong file requirements.txt
 
 ---
 
