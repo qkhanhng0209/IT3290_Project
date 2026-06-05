@@ -8,5 +8,4 @@ def get_connection():
         f"DATABASE={Config.DB_NAME};"
         f"Trusted_Connection=yes;"
     )
-
     return conn
