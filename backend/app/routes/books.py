@@ -155,4 +155,43 @@ def search_books():
         "success": True,
         "data": books
     }
+
+@books_bp.route("/api/books", methods=["POST"])
+def add_book():
+    data = request.get_json()
+    
+    isbn = data.get("isbn")
+    ten_sach = data.get("ten_sach")
+    ma_so_nxb = data.get("ma_so_nxb")
+    nam_xuat_ban = data.get("nam_xuat_ban")
+    so_trang = data.get("so_trang")
+    mo_ta = data.get("mo_ta")
+    gia_bia = data.get("gia_bia")
+    
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    query = """
+    INSERT INTO DauSach (
+	ISBN, MaSoNXB, TenSach, NamXuatBan, SoTrang, MoTa, GiaBia
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    """
+    
+    try:
+        cursor.execute(query, (isbn, ma_so_nxb, ten_sach, nam_xuat_ban, so_trang, mo_ta, gia_bia))
+        
+        conn.commit()
+        return {
+            "success": True,
+            "message": "Thêm sách thành công"
+        }, 201
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": str(e)
+        }, 400
+        
+    finally:
+        conn.close()
     
