@@ -194,4 +194,58 @@ def add_book():
         
     finally:
         conn.close()
+
+# Cập nhật thông tin trong bảng DauSach
+@books_bp.route("/api/books/<isbn>", methods=["PUT"])
+def update_book(isbn):
+    data = request.get_json()
     
+    ten_sach = data.get("ten_sach")
+    ma_so_nxb = data.get("ma_so_nxb")
+    nam_xuat_ban = data.get("nam_xuat_ban")
+    so_trang = data.get("so_trang")
+    mo_ta = data.get("mo_ta")
+    gia_bia = data.get("gia_bia")
+    
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    query = """
+    UPDATE DauSach
+    SET
+        MaSoNXB = ?,
+        TenSach = ?,
+        NamXuatBan = ?,
+        SoTrang = ?,
+        MoTa = ?,
+        GiaBia = ?
+    WHERE ISBN = ?
+    """
+    
+    try:
+        cursor.execute(query, (
+            ma_so_nxb, ten_sach, nam_xuat_ban, so_trang, mo_ta, gia_bia, isbn
+        ))
+        
+        if cursor.rowcount == 0:
+            conn.close()
+            return {
+                "success": False,
+                "message": "Không tìm thấy sách"
+            }, 404
+        
+        conn.commit()
+        
+        return {
+            "success": True,
+            "message": "Cập nhật sách thành công"
+        }
+    
+    except Exception as e:
+        return {
+            "success": False,
+            "message": str(e)
+        }, 400
+    
+    finally:
+        conn.close()
