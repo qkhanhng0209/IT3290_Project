@@ -13,6 +13,7 @@ from app.routes.reports import reports_bp
 
 def create_app():
     app = Flask(__name__)
+    app.json.ensure_ascii = False
     app.secret_key = Config.SECRET_KEY
     CORS(app)
     
