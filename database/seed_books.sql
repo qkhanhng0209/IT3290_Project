@@ -147,3 +147,4 @@ INSERT INTO CuonSach (ISBN, TinhTrang, HeSoDenBu) VALUES
 ('978-604-5-50002-2', N'Tot',       1.2),
 ('978-604-5-50002-2', N'Tot',       1.2)
 GO
+
