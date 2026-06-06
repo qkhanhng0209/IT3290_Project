@@ -249,3 +249,72 @@ def update_book(isbn):
     
     finally:
         conn.close()
+        
+# Xóa đầu sách
+@books_bp.route("/api/books/<isbn>", methods=["DELETE"])
+def delete_book(isbn):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    try:
+        # Kiểm tra đầu sách có tồn tại hay không
+        cursor.execute(
+            "SELECT ISBN FROM DauSach WHERE ISBN = ?",
+            (isbn,)
+        )
+        
+        if cursor.fetchone() is None:
+            return {
+                "success": False,
+                "message": "Không tìm thấy sách"
+            }, 404
+            
+        # Kiểm tra còn cuốn sách vật lý nào không
+        cursor.execute(
+            "SELECT COUNT(*) FROM CuonSach WHERE ISBN = ?",
+            (isbn,)
+        )
+        
+        so_luong = cursor.fetchone()[0]
+        
+        if so_luong > 0:
+            return {
+                "success": False,
+                "message": "Không thể xóa đầu sách vì vẫn còn các cuốn sách thuộc đầu sách này"
+            }, 400
+            
+        # Xóa các bảng liên kết
+        cursor.execute(
+            "DELETE FROM TacGia_DauSach WHERE ISBN = ?",
+            (isbn,)
+        )
+        
+        cursor.execute(
+            "DELETE FROM TheLoai_DauSach WHERE ISBN = ?",
+            (isbn,)
+        )
+        
+        # Xóa đầu sách
+        cursor.execute(
+            "DELETE FROM DauSach WHERE ISBN = ?",
+            (isbn,)
+        )
+        
+        conn.commit()
+        
+        return {
+            "success": True,
+            "message": "Xóa đầu sách thành công!"
+        }
+        
+    except Exception as e:
+        conn.rollback()
+        
+        return {
+            "success": False,
+            "message": str(e)
+        }, 500
+        
+    finally:
+        conn.close()
+    
