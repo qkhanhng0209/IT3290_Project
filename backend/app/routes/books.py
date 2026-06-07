@@ -123,17 +123,39 @@ def search_books():
     conn = get_connection()
     cursor = conn.cursor()
     
+    # Tìm kiếm theo tên sách, ISBN, Tên tác giả, Thể loại
     query = """
-    SELECT ds.ISBN, ds.TenSach, nxb.TenNXB, ds.NamXuatBan, ds.GiaBia, COUNT(cs.MaSach) as SoLuong
+    SELECT ds.ISBN, ds.TenSach, nxb.TenNXB, ds.NamXuatBan, ds.GiaBia,
+		(SELECT COUNT(*) FROM CuonSach cs WHERE cs.ISBN = ds.ISBN) AS SoLuong,
+		(SELECT STRING_AGG(tg.TenTacGia, ', ')
+		    FROM TacGia tg JOIN TacGia_DauSach tgds on tg.MaSoTG = tgds.MaSoTG
+		    WHERE tgds.ISBN = ds.ISBN) AS TacGia,
+		(SELECT STRING_AGG(tl.TenTheLoai, ', ')
+		    FROM TheLoai tl JOIN TheLoai_DauSach tlds ON tl.MaTheLoai = tlds.MaTheLoai
+		    WHERE tlds.ISBN = ds.ISBN) AS TheLoai
     FROM DauSach ds
-    LEFT JOIN NXB nxb ON ds.MaSoNXB = nxb.MaSoNXB
-    LEFT JOIN CuonSach cs on ds.ISBN = cs.ISBN
-    WHERE ds.TenSach LIKE ?
-    GROUP BY ds.ISBN, ds.TenSach, nxb.TenNXB, ds.NamXuatBan, ds.GiaBia
+    LEFT JOIN NXB nxb on ds.MaSoNXB = nxb.MaSoNXB
+    WHERE ds.ISBN LIKE ? OR ds.TenSach LIKE ?
+    OR EXISTS (
+			SELECT 1
+			FROM TacGia tg
+			JOIN TacGia_DauSach tgds on tg.MaSoTG = tgds.MaSoTG
+			WHERE tgds.ISBN = ds.ISBN
+			AND tg.TenTacGia LIKE ?)
+    OR EXISTS (
+			SELECT 1
+			FROM TheLoai tl
+			JOIN TheLoai_DauSach tlds ON tl.MaTheLoai = tlds.MaTheLoai
+			WHERE tlds.ISBN = ds.ISBN
+			AND tl.TenTheLoai LIKE ?)
     ORDER BY ds.TenSach
     """
     
-    cursor.execute(query, (f"%{keyword}%",))
+    search_term = f"%{keyword}%"
+    
+    cursor.execute(
+        query, (search_term, search_term, search_term, search_term)
+    )
     
     rows = cursor.fetchall()
     
@@ -146,7 +168,9 @@ def search_books():
             "nha_xuat_ban": row.TenNXB,
             "nam_xuat_ban": row.NamXuatBan,
             "gia_bia": float(row.GiaBia),
-            "so_luong": row.SoLuong
+            "so_luong": row.SoLuong,
+            "tac_gia": row.TacGia,
+            "the_loai": row.TheLoai
         })
         
     conn.close()
