@@ -214,3 +214,112 @@ exec sp_AddCategoryToBook '1001-1002-1003', N'Văn học phương Tây';
 exec sp_AddCategoryToBook '1001-1002-1003', N'Văn học kinh điển';
 exec sp_AddCategoryToBook '1001-1002-1003', N'Sử thi';
 
+-- sp cập nhật thông tin sách
+CREATE OR ALTER PROCEDURE sp_UpdateBook
+	@ISBN VARCHAR(20),
+	@TenSach NVARCHAR(255),
+	@TenNXB NVARCHAR(200),
+	@NamXuatBan INT,
+	@SoTrang INT,
+	@MoTa NVARCHAR(1000),
+	@GiaBia DECIMAL(10,2)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @MaSoNXB INT;
+
+	-- Tìm NXB
+	SELECT @MaSoNXB = MaSoNXB
+	FROM NXB
+	WHERE TenNXB = @TenNXB;
+
+	-- Nếu NXB chưa tồn tại thì tạo mới
+	IF @MaSoNXB IS NULL
+	BEGIN
+		INSERT INTO NXB(TenNXB)
+		VALUES (@TenNXB)
+
+		SET @MaSoNXB = SCOPE_IDENTITY();
+	END
+
+	UPDATE DauSach
+	SET
+		MaSoNXB = @MaSoNXB,
+		TenSach = @TenSach,
+		NamXuatBan = @NamXuatBan,
+		SoTrang = @SoTrang,
+		MoTa = @MoTa,
+		GiaBia = @GiaBia
+	WHERE ISBN = @ISBN
+END
+GO
+
+-- sp xóa hết tác giả khỏi 1 cuốn sách, hỗ trợ việc update
+CREATE OR ALTER PROCEDURE sp_RemoveAllAuthorsFromBook
+	@ISBN VARCHAR(20)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE FROM TacGia_DauSach
+	WHERE ISBN = @ISBN
+END
+GO
+
+-- sp xóa hết thể loại khỏi 1 cuốn sách, hỗ trợ việc update
+CREATE OR ALTER PROCEDURE sp_RemoveAllCategoriesFromBook
+	@ISBN VARCHAR(20)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE FROM TheLoai_DauSach
+	WHERE ISBN = @ISBN
+END
+GO
+
+select * from vw_BookInfo
+select * from TheLoai
+select * from TacGia
+select * from TheLoai_DauSach
+select * from TacGia_DauSach
+select * from NXB
+select * from DauSach
+
+CREATE OR ALTER PROCEDURE sp_DeleteBook
+	@ISBN VARCHAR(20)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	-- Kiểm tra đầu sách có tồn tại hay không
+	IF NOT EXISTS (
+		SELECT 1
+		FROM DauSach
+		WHERE ISBN = @ISBN
+	)
+	BEGIN
+		THROW 50001, N'Không tìm thấy sách!', 1;
+	END;
+
+	-- Kiểm tra xem còn cuốn sách vật lý nào hay không
+	IF EXISTS (
+		SELECT 1
+		FROM CuonSach
+		WHERE ISBN = @ISBN
+	)
+	BEGIN
+		THROW 50002, N'Không thể xóa đầu sách này vì còn các cuốn sách vật lý!', 1;
+	END;
+
+	DELETE FROM TacGia_DauSach
+	WHERE ISBN = @ISBN;
+
+	DELETE FROM TheLoai_DauSach
+	WHERE ISBN = @ISBN;
+
+	DELETE FROM DauSach
+	WHERE ISBN = @ISBN;
+END
+GO
