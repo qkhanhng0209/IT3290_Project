@@ -192,65 +192,71 @@ def add_book():
 @books_bp.route("/api/books/<isbn>", methods=["PUT"])
 def update_book(isbn):
     data = request.get_json()
-    
+
     ten_sach = data.get("ten_sach")
-    ma_so_nxb = data.get("ma_so_nxb")
+    ten_nxb = data.get("ten_nxb")
     nam_xuat_ban = data.get("nam_xuat_ban")
     so_trang = data.get("so_trang")
     mo_ta = data.get("mo_ta")
     gia_bia = data.get("gia_bia")
     
+    tac_gia = data.get("tac_gia", [])
+    the_loai = data.get("the_loai", [])
+    
     conn = get_connection()
     cursor = conn.cursor()
     
-    query = """
-    UPDATE DauSach
-    SET
-        MaSoNXB = ?,
-        TenSach = ?,
-        NamXuatBan = ?,
-        SoTrang = ?,
-        MoTa = ?,
-        GiaBia = ?
-    WHERE ISBN = ?
-    """
-    if not all([
-        ten_sach,
-        ma_so_nxb,
-        nam_xuat_ban,
-        so_trang,
-        gia_bia
-    ]):
-        return {
-            "success": False,
-            "message": "Thiếu dữ liệu bắt buộc"
-        }, 400
-    
     try:
-        cursor.execute(query, (
-            ma_so_nxb, ten_sach, nam_xuat_ban, so_trang, mo_ta, gia_bia, isbn
+        conn.autocommit = False
+        
+        # Cập nhật Đầu sách
+        query_book = """
+            EXEC sp_UpdateBook ?, ?, ?, ?, ?, ?, ?
+        """
+        
+        cursor.execute(query_book, (
+            isbn, ten_sach, ten_nxb, nam_xuat_ban, so_trang, mo_ta, gia_bia
         ))
         
-        if cursor.rowcount == 0:
-            conn.close()
-            return {
-                "success": False,
-                "message": "Không tìm thấy sách"
-            }, 404
+        # Xóa toàn bộ tác giả cũ
+        query_remove_authors = """
+            EXEC sp_RemoveAllAuthorsFromBook ?
+        """
         
+        cursor.execute(query_remove_authors, (isbn,))
+        # Thêm các tác giả mới
+        query_add_author = """
+            EXEC sp_AddAuthorToBook ?, ?
+        """
+        for author in tac_gia:
+            cursor.execute(query_add_author, (isbn, author))
+            
+        # Xóa toàn bộ thể loại cũ
+        query_remove_categories = """
+            EXEC sp_RemoveAllCategoriesFromBook ?
+        """
+        cursor.execute(query_remove_categories, (isbn,))
+        # Thêm các thể loại mới
+        query_add_category = """
+            EXEC sp_AddCategoryToBook ?, ?
+        """
+        
+        for category in the_loai:
+            cursor.execute(query_add_category, (isbn, category))
+            
         conn.commit()
         
         return {
             "success": True,
             "message": "Cập nhật sách thành công"
         }
-    
     except Exception as e:
+        conn.rollback()
+        
         return {
             "success": False,
             "message": str(e)
         }, 400
-    
     finally:
         conn.close()
         
@@ -261,48 +267,11 @@ def delete_book(isbn):
     cursor = conn.cursor()
     
     try:
-        # Kiểm tra đầu sách có tồn tại hay không
-        cursor.execute(
-            "SELECT ISBN FROM DauSach WHERE ISBN = ?",
-            (isbn,)
-        )
+        query = """
+            EXEC sp_DeleteBook ?
+        """
         
-        if cursor.fetchone() is None:
-            return {
-                "success": False,
-                "message": "Không tìm thấy sách"
-            }, 404
-            
-        # Kiểm tra còn cuốn sách vật lý nào không
-        cursor.execute(
-            "SELECT COUNT(*) FROM CuonSach WHERE ISBN = ?",
-            (isbn,)
-        )
-        
-        so_luong = cursor.fetchone()[0]
-        
-        if so_luong > 0:
-            return {
-                "success": False,
-                "message": "Không thể xóa đầu sách vì vẫn còn các cuốn sách thuộc đầu sách này"
-            }, 400
-            
-        # Xóa các bảng liên kết
-        cursor.execute(
-            "DELETE FROM TacGia_DauSach WHERE ISBN = ?",
-            (isbn,)
-        )
-        
-        cursor.execute(
-            "DELETE FROM TheLoai_DauSach WHERE ISBN = ?",
-            (isbn,)
-        )
-        
-        # Xóa đầu sách
-        cursor.execute(
-            "DELETE FROM DauSach WHERE ISBN = ?",
-            (isbn,)
-        )
+        cursor.execute(query, (isbn,))
         
         conn.commit()
         
@@ -317,7 +286,7 @@ def delete_book(isbn):
         return {
             "success": False,
             "message": str(e)
-        }, 500
+        }, 400
         
     finally:
         conn.close()
