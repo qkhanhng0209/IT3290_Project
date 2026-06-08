@@ -10,14 +10,7 @@ def get_books():
     cursor = conn.cursor()
     
     query = """
-        SELECT ds.ISBN, ds.TenSach, nxb.TenNXB, ds.NamXuatBan, ds.GiaBia, COUNT(cs.MaSach) AS SoLuong
-        FROM DauSach ds
-        LEFT JOIN NXB nxb
-        ON ds.MaSoNXB = nxb.MaSoNXB
-        LEFT JOIN CuonSach cs
-        ON ds.ISBN = cs.ISBN
-        GROUP BY ds.ISBN, ds.TenSach, nxb.TenNXB, ds.NamXuatBan, ds.GiaBia
-        ORDER BY ds.TenSach
+        EXEC sp_GetBooks
     """
     
     cursor.execute(query)
@@ -33,7 +26,9 @@ def get_books():
             "nha_xuat_ban": row.TenNXB,
             "nam_xuat_ban": row.NamXuatBan,
             "gia_bia": float(row.GiaBia),
-            "so_luong": row.SoLuong
+            "so_luong": row.SoLuong,
+            "tac_gia": row.TacGia,
+            "the_loai": row.TheLoai
         })
         
     conn.close()
@@ -50,69 +45,44 @@ def get_book_by_isbn(isbn):
     cursor = conn.cursor()
     
     # Lấy thông tin chính của sách
-    query_book = """
-    SELECT ds.ISBN, ds.TenSach, ds.GiaBia, ds.NamXuatBan, nxb.TenNXB, COUNT(cs.MaSach) AS SoLuong
-    FROM DauSach ds
-    LEFT JOIN NXB nxb ON ds.MaSoNXB = nxb.MaSoNXB
-    LEFT JOIN CuonSach cs ON ds.ISBN = cs.ISBN
-    WHERE ds.ISBN = ?
-    GROUP BY ds.ISBN, ds.TenSach, ds.GiaBia, ds.NamXuatBan, nxb.TenNXB
+    query = """
+        EXEC sp_GetBooksByISBN ?
     """
     
-    cursor.execute(query_book, (isbn,))
-    book = cursor.fetchone()
+    cursor.execute(query, (isbn,))
     
-    if not book:
-        conn.close()
-        return {
-            "success": False,
-            "message": "Không tìm thấy sách"
-        }, 404
-        
-    # Lấy tác giả
-    query_authors = """
-    SELECT tg.TenTacGia
-    FROM TacGia tg
-    JOIN TacGia_DauSach tgds ON tg.MaSoTG = tgds.MaSoTG
-    WHERE tgds.ISBN = ?
-    """
-    
-    cursor.execute(query_authors, (isbn,))
-    authors = [row.TenTacGia for row in cursor.fetchall()]
-    
-    # Lấy thể loại
-    query_categories = """
-    SELECT tl.TenTheLoai
-    FROM TheLoai tl
-    JOIN TheLoai_DauSach tlds ON tl.MaTheLoai = tlds.MaTheLoai
-    WHERE tlds.ISBN = ?
-    """
-    
-    cursor.execute(query_categories, (isbn,))
-    categories = [row.TenTheLoai for row in cursor.fetchall()]
-    
-    result = {
-        "isbn": book.ISBN,
-        "ten_sach": book.TenSach,
-        "gia_bia": float(book.GiaBia),
-        "nam_xuat_ban": book.NamXuatBan,
-        "nha_xuat_ban": book.TenNXB,
-        "so_luong": book.SoLuong,
-        "tac_gia": authors,
-        "the_loai": categories
-    }
+    row = cursor.fetchone()
     
     conn.close()
+    
+    if row is None:
+        return {
+            "success": False,
+            "message": "Không tìm thấy sách!"
+        }, 404
+    
+    result = {
+        "isbn": row.ISBN,
+        "ten_sach": row.TenSach,
+        "nha_xuat_ban": row.TenNXB,
+        "nam_xuat_ban": row.NamXuatBan,
+        "gia_bia": float(row.GiaBia),
+        "so_luong": row.SoLuong,
+        "tac_gia": row.TacGia,
+        "the_loai": row.TheLoai
+    }
     
     return {
         "success": True,
         "data": result
     }
     
+# Tìm kiếm sách theo isbn, tác giả, tên sách, thể loại
 @books_bp.route("/api/books/search", methods=["GET"])
 def search_books():
     
     keyword = request.args.get("q", "").strip()
+    search_type = request.args.get("type", "all")
     
     if not keyword:
         return {
@@ -125,36 +95,11 @@ def search_books():
     
     # Tìm kiếm theo tên sách, ISBN, Tên tác giả, Thể loại
     query = """
-    SELECT ds.ISBN, ds.TenSach, nxb.TenNXB, ds.NamXuatBan, ds.GiaBia,
-		(SELECT COUNT(*) FROM CuonSach cs WHERE cs.ISBN = ds.ISBN) AS SoLuong,
-		(SELECT STRING_AGG(tg.TenTacGia, ', ')
-		    FROM TacGia tg JOIN TacGia_DauSach tgds on tg.MaSoTG = tgds.MaSoTG
-		    WHERE tgds.ISBN = ds.ISBN) AS TacGia,
-		(SELECT STRING_AGG(tl.TenTheLoai, ', ')
-		    FROM TheLoai tl JOIN TheLoai_DauSach tlds ON tl.MaTheLoai = tlds.MaTheLoai
-		    WHERE tlds.ISBN = ds.ISBN) AS TheLoai
-    FROM DauSach ds
-    LEFT JOIN NXB nxb on ds.MaSoNXB = nxb.MaSoNXB
-    WHERE ds.ISBN LIKE ? OR ds.TenSach LIKE ?
-    OR EXISTS (
-			SELECT 1
-			FROM TacGia tg
-			JOIN TacGia_DauSach tgds on tg.MaSoTG = tgds.MaSoTG
-			WHERE tgds.ISBN = ds.ISBN
-			AND tg.TenTacGia LIKE ?)
-    OR EXISTS (
-			SELECT 1
-			FROM TheLoai tl
-			JOIN TheLoai_DauSach tlds ON tl.MaTheLoai = tlds.MaTheLoai
-			WHERE tlds.ISBN = ds.ISBN
-			AND tl.TenTheLoai LIKE ?)
-    ORDER BY ds.TenSach
+        EXEC sp_SearchBooks ?, ?
     """
     
-    search_term = f"%{keyword}%"
-    
     cursor.execute(
-        query, (search_term, search_term, search_term, search_term)
+        query, (keyword, search_type)
     )
     
     rows = cursor.fetchall()
@@ -180,6 +125,7 @@ def search_books():
         "data": books
     }
 
+# Thêm sách
 @books_bp.route("/api/books", methods=["POST"])
 def add_book():
     data = request.get_json()
@@ -245,6 +191,17 @@ def update_book(isbn):
         GiaBia = ?
     WHERE ISBN = ?
     """
+    if not all([
+        ten_sach,
+        ma_so_nxb,
+        nam_xuat_ban,
+        so_trang,
+        gia_bia
+    ]):
+        return {
+            "success": False,
+            "message": "Thiếu dữ liệu bắt buộc"
+        }, 400
     
     try:
         cursor.execute(query, (
