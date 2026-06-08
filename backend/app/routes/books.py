@@ -132,31 +132,54 @@ def add_book():
     
     isbn = data.get("isbn")
     ten_sach = data.get("ten_sach")
-    ma_so_nxb = data.get("ma_so_nxb")
+    ten_nxb = data.get("ten_nxb")
     nam_xuat_ban = data.get("nam_xuat_ban")
     so_trang = data.get("so_trang")
     mo_ta = data.get("mo_ta")
     gia_bia = data.get("gia_bia")
     
+    tac_gia = data.get("tac_gia", [])
+    the_loai = data.get("the_loai", [])
+    
     conn = get_connection()
     cursor = conn.cursor()
     
-    query = """
-    INSERT INTO DauSach (
-	ISBN, MaSoNXB, TenSach, NamXuatBan, SoTrang, MoTa, GiaBia
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)
-    """
-    
     try:
-        cursor.execute(query, (isbn, ma_so_nxb, ten_sach, nam_xuat_ban, so_trang, mo_ta, gia_bia))
+        # Bắt đầu transaction
+        conn.autocommit = False
+        
+        # Thêm đầu sách
+        query_book = """
+            EXEC sp_AddBook ?, ?, ?, ?, ?, ?, ?
+        """
+        
+        cursor.execute(query_book, (isbn, ten_sach, ten_nxb, nam_xuat_ban, so_trang, mo_ta, gia_bia))
+        
+        # Thêm tác giả
+        query_author = """
+            EXEC sp_AddAuthorToBook ?, ?
+        """
+        for author in tac_gia:
+            cursor.execute(query_author, (isbn, author))
+            
+        # Thêm thể loại
+        query_category = """
+            EXEC sp_AddCategoryToBook ?, ?
+        """
+        
+        for category in the_loai:
+            cursor.execute(query_category, (isbn, category))
         
         conn.commit()
+        
         return {
             "success": True,
             "message": "Thêm sách thành công"
         }, 201
         
     except Exception as e:
+        conn.rollback()
+        
         return {
             "success": False,
             "message": str(e)
