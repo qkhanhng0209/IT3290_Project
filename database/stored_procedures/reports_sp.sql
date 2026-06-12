@@ -103,3 +103,8 @@ BEGIN
 	ORDER BY ds.TenSach;
 END
 GO
+
+EXEC sp_ReportBooksByCategory
+EXEC sp_ReportBooksByPublisher
+EXEC sp_ReportBooksByAuthor
+EXEC sp_ReportInventory
