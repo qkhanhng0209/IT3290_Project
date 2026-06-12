@@ -78,6 +78,7 @@ def get_book_by_isbn(isbn):
     }
     
 # Tìm kiếm sách theo isbn, tác giả, tên sách, thể loại
+# GET /api/books/search
 @books_bp.route("/api/books/search", methods=["GET"])
 def search_books():
     
@@ -126,6 +127,7 @@ def search_books():
     }
 
 # Thêm sách
+# POST /api/books
 @books_bp.route("/api/books", methods=["POST"])
 def add_book():
     data = request.get_json()
@@ -189,6 +191,7 @@ def add_book():
         conn.close()
 
 # Cập nhật thông tin trong bảng DauSach
+# PUT /api/books/<isbn>
 @books_bp.route("/api/books/<isbn>", methods=["PUT"])
 def update_book(isbn):
     data = request.get_json()
@@ -261,6 +264,7 @@ def update_book(isbn):
         conn.close()
         
 # Xóa đầu sách
+# DELETE /api/books/<isbn>
 @books_bp.route("/api/books/<isbn>", methods=["DELETE"])
 def delete_book(isbn):
     conn = get_connection()

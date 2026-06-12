@@ -3,6 +3,7 @@ from app.database import get_connection
 
 reports_bp = Blueprint("reports", __name__)
 
+# GET /api/reports/books-by-category
 @reports_bp.route("/api/reports/books-by-category", methods=["GET"])
 def report_books_by_category():
     
@@ -33,6 +34,7 @@ def report_books_by_category():
         "data": reports
     }
     
+# GET /api/reports/books-by-publisher
 @reports_bp.route("/api/reports/books-by-publisher", methods=["GET"])
 def report_books_by_publisher():
     conn = get_connection()
@@ -62,6 +64,7 @@ def report_books_by_publisher():
         "data": reports
     }
     
+# GET /api/reports/books-by-author
 @reports_bp.route("/api/reports/books-by-author", methods=["GET"])
 def report_books_by_author():
     conn = get_connection()
@@ -90,7 +93,8 @@ def report_books_by_author():
         "success": True,
         "data": reports
     }
-    
+
+# GET /api/reports/inventory    
 @reports_bp.route("/api/reports/inventory", methods=["GET"])
 def report_inventory():
     conn = get_connection()
