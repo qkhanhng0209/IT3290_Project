@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Trả sách</title>
+    <link rel="stylesheet" href="../shared/base.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <header class="topbar">
+        <div class="brand">
+            📚 Quản lý thư viện
+        </div>
+
+        <nav class="nav-links">
+            <a href="../borrowing/borrowing.html">
+                Mượn sách
+            </a>
+
+            <a class="active" href="./returns.html">
+                Trả sách
+            </a>
+        </nav>
+    </header>
+
+    <main class="page">
+
+        <section class="page-header">
+            <div class="page-title">
+                <h1>📖 Trả sách</h1>
+                <p>
+                    Ghi nhận trả sách, xử lý hư hỏng, mất mát và tính tiền phạt.
+                </p>
+            </div>
+        </section>
+
+        <section class="grid">
+
+            <!-- BÊN TRÁI -->
+            <div class="stack">
+
+                <section class="panel">
+                    <h2>🔍 Tra cứu phiếu mượn</h2>
+
+                    <form
+                        id="lookupForm"
+                        class="form-grid">
+
+                        <div class="field">
+                            <label for="ticketId">
+                                Mã phiếu mượn
+                            </label>
+
+                            <input
+                                id="ticketId"
+                                type="number"
+                                min="1"
+                                placeholder="Ví dụ: 1001"
+                                required>
+                        </div>
+
+                        <div class="field">
+                            <label for="returnStaffId">
+                                Mã nhân viên
+                            </label>
+
+                            <input
+                                id="returnStaffId"
+                                type="number"
+                                min="1"
+                                placeholder="Nhân viên xử lý"
+                                required>
+                        </div>
+
+                        <div class="actions field full">
+                            <button type="submit">
+                                Tải danh sách sách
+                            </button>
+                        </div>
+
+                        <div
+                            id="lookupMessage"
+                            class="message field full"
+                            hidden>
+                        </div>
+
+                    </form>
+                </section>
+
+                <section class="panel">
+
+                    <div class="panel-header">
+                        <h2>📚 Danh sách trả sách</h2>
+
+                        <span class="badge">
+                            <span id="returnBookCount">
+                                0
+                            </span>
+                            cuốn
+                        </span>
+                    </div>
+
+                    <form id="returnForm">
+
+                        <div
+                            id="returnItems"
+                            class="return-items">
+                        </div>
+
+                        <div class="actions">
+
+                            <button
+                                type="submit">
+                                Ghi nhận trả sách
+                            </button>
+
+                        </div>
+
+                        <div
+                            id="returnMessage"
+                            class="message"
+                            hidden>
+                        </div>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+            <!-- BÊN PHẢI -->
+            <aside class="stack">
+
+                <section class="panel">
+
+                    <h2>📋 Kết quả xử lý</h2>
+
+                    <div class="summary-cards">
+
+                        <div class="summary-card">
+                            <span>Tổng tiền phạt</span>
+                            <strong id="totalFine">
+                                0 VNĐ
+                            </strong>
+                        </div>
+
+                        <div class="summary-card">
+                            <span>Trạng thái phiếu</span>
+                            <strong id="ticketStatus">
+                                -
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section class="panel">
+
+                    <h2>Chi tiết xử lý</h2>
+
+                    <div class="table-wrap">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Mã sách</th>
+                                    <th>Tên sách</th>
+                                    <th>Ngày trễ</th>
+                                    <th>Tình trạng</th>
+                                    <th>Tiền phạt</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="returnResultTable">
+
+                                <tr>
+                                    <td colspan="5">
+                                        Chưa có dữ liệu
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="../shared/api.js"></script>
+<script src="./returns.js"></script>
+
+</body>
+</html>
