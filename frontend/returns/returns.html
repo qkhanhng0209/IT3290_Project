@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tra sach</title>
+    <link rel="stylesheet" href="../shared/base.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand">Quan ly thu vien</div>
+            <nav class="nav-links" aria-label="Chuc nang">
+                <a href="../borrowing/borrowing.html">Muon sach</a>
+                <a class="active" href="./returns.html">Tra sach</a>
+            </nav>
+        </header>
+
+        <main class="page">
+            <section class="page-header">
+                <div class="page-title">
+                    <h1>Tra sach</h1>
+                    <p>Ghi nhan tra tung cuon, tinh tien phat va cap nhat tinh trang kho.</p>
+                </div>
+            </section>
+
+            <section class="grid">
+                <div class="stack">
+                    <section class="panel">
+                        <h2>Tim sach dang muon</h2>
+                        <form id="lookupForm" class="form-grid">
+                            <div class="field">
+                                <label for="ticketId">Ma phieu muon</label>
+                                <input id="ticketId" type="number" min="1" required>
+                            </div>
+                            <div class="field">
+                                <label for="returnStaffId">Ma nhan vien</label>
+                                <input id="returnStaffId" type="number" min="1" required>
+                            </div>
+                            <div class="actions field full">
+                                <button type="submit">Tai sach chua tra</button>
+                            </div>
+                            <div id="lookupMessage" class="message field full" hidden></div>
+                        </form>
+                    </section>
+
+                    <section class="panel">
+                        <h2>Danh sach tra</h2>
+                        <form id="returnForm">
+                            <div id="returnItems"></div>
+                            <div class="actions">
+                                <button type="submit">Ghi nhan tra sach</button>
+                            </div>
+                            <div id="returnMessage" class="message" hidden></div>
+                        </form>
+                    </section>
+                </div>
+
+                <aside class="panel">
+                    <h2>Ket qua xu ly</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ma sach</th>
+                                    <th>Ten sach</th>
+                                    <th>Ngay tre</th>
+                                    <th>Tinh trang</th>
+                                    <th>Tien phat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="returnResultTable"></tbody>
+                        </table>
+                    </div>
+                </aside>
+            </section>
+        </main>
+    </div>
+
+    <script src="../shared/api.js"></script>
+    <script src="./returns.js"></script>
+</body>
+</html>
