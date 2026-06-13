@@ -129,3 +129,62 @@ def report_inventory():
         "data": reports
     }
     
+# Trả về thông tin 10 đầu sách được mượn nhiều nhất
+@reports_bp.route("/api/reports/top-books", methods=["GET"])
+def top_books():
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    query = """
+        EXEC sp_TopBooks
+    """
+    
+    cursor.execute(query)
+    
+    rows = cursor.fetchall()
+    
+    reports = []
+    
+    for row in rows:
+        reports.append({
+            "isbn": row.ISBN,
+            "ten_sach": row.TenSach,
+            "so_luot_muon": row.SoLuotMuon
+        })
+    
+    conn.close()
+    
+    return {
+        "success": True,
+        "data": reports
+    }
+    
+# Trả về 10 độc giả tích cực nhất
+@reports_bp.route("/api/reports/top-readers", methods=["GET"])
+def top_readers():
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    query = """
+        EXEC sp_TopReaders
+    """
+    
+    cursor.execute(query)
+    
+    rows = cursor.fetchall()
+    
+    reports = []
+    
+    for row in rows:
+        reports.append({
+            "ma_doc_gia": row.MaDocGia,
+            "ho_ten": row.HoTen,
+            "tong_so_sach_muon": row.TongSoSachMuon
+        })
+    
+    conn.close()
+    
+    return {
+        "success": True,
+        "data": reports
+    }

@@ -108,3 +108,40 @@ EXEC sp_ReportBooksByCategory
 EXEC sp_ReportBooksByPublisher
 EXEC sp_ReportBooksByAuthor
 EXEC sp_ReportInventory
+
+CREATE OR ALTER PROCEDURE sp_TopBooks
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TOP 10
+		ds.ISBN,
+		ds.TenSach,
+		COUNT(*) AS SoLuotMuon
+	FROM ChiTietPhieuMuon ctpm
+	JOIN CuonSach cs ON ctpm.MaSach = cs.MaSach
+	JOIN DauSach ds ON cs.ISBN = ds.ISBN
+	GROUP BY ds.ISBN, ds.TenSach
+	ORDER BY SoLuotMuon DESC, ds.TenSach;
+END
+GO
+
+exec sp_TopBooks
+
+CREATE OR ALTER PROCEDURE sp_TopReaders
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	SELECT TOP 10
+		dg.MaDocGia,
+		dg.HoTen,
+		COUNT(ctpm.MaSach) AS TongSoSachMuon
+	FROM DocGia dg
+	JOIN PhieuMuon pm ON dg.MaDocGia = pm.MaDocGia
+	JOIN ChiTietPhieuMuon ctpm ON pm.MaPhieuMuon = ctpm.MaPhieuMuon
+	GROUP BY dg.MaDocGia, dg.HoTen
+	ORDER BY TongSoSachMuon DESC, dg.HoTen;
+END
+GO
+exec sp_TopReaders

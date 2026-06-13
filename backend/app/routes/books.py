@@ -38,45 +38,6 @@ def get_books():
         "data": books
     }
 
-# GET /api/books/<isbn>
-@books_bp.route("/api/books/<isbn>", methods=["GET"])
-def get_book_by_isbn(isbn):
-    conn = get_connection()
-    cursor = conn.cursor()
-    
-    # Lấy thông tin chính của sách
-    query = """
-        EXEC sp_GetBooksByISBN ?
-    """
-    
-    cursor.execute(query, (isbn,))
-    
-    row = cursor.fetchone()
-    
-    conn.close()
-    
-    if row is None:
-        return {
-            "success": False,
-            "message": "Không tìm thấy sách!"
-        }, 404
-    
-    result = {
-        "isbn": row.ISBN,
-        "ten_sach": row.TenSach,
-        "nha_xuat_ban": row.TenNXB,
-        "nam_xuat_ban": row.NamXuatBan,
-        "gia_bia": float(row.GiaBia),
-        "so_luong": row.SoLuong,
-        "tac_gia": row.TacGia,
-        "the_loai": row.TheLoai
-    }
-    
-    return {
-        "success": True,
-        "data": result
-    }
-    
 # Tìm kiếm sách theo isbn, tác giả, tên sách, thể loại
 # GET /api/books/search
 @books_bp.route("/api/books/search", methods=["GET"])
@@ -124,6 +85,45 @@ def search_books():
     return {
         "success": True,
         "data": books
+    }
+    
+# GET /api/books/<isbn>
+@books_bp.route("/api/books/<isbn>", methods=["GET"])
+def get_book_by_isbn(isbn):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    # Lấy thông tin chính của sách
+    query = """
+        EXEC sp_GetBooksByISBN ?
+    """
+    
+    cursor.execute(query, (isbn,))
+    
+    row = cursor.fetchone()
+    
+    conn.close()
+    
+    if row is None:
+        return {
+            "success": False,
+            "message": "Không tìm thấy sách!"
+        }, 404
+    
+    result = {
+        "isbn": row.ISBN,
+        "ten_sach": row.TenSach,
+        "nha_xuat_ban": row.TenNXB,
+        "nam_xuat_ban": row.NamXuatBan,
+        "gia_bia": float(row.GiaBia),
+        "so_luong": row.SoLuong,
+        "tac_gia": row.TacGia,
+        "the_loai": row.TheLoai
+    }
+    
+    return {
+        "success": True,
+        "data": result
     }
 
 # Thêm sách
