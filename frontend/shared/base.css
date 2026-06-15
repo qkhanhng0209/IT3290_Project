@@ -1,0 +1,209 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f0f0f0;
+}
+
+/* HEADER */
+.header {
+    background: rgb(146, 141, 156);
+    color: white;
+}
+.logo-box img {
+    width: 60px;
+    height: auto;
+}
+.text p {
+    margin: 0;
+    text-align: center;
+}
+
+/* Dòng trên */
+.title-en {
+    position: relative;
+    display: inline-block;
+    letter-spacing: 2px;
+    font-size: 20px;
+}
+
+/* Gạch */
+.title-en::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -8px;
+    width: 85%;
+    height: 1.5px;
+    background: #ccc;
+}
+
+/* Dòng dưới */
+.text p:last-child {
+    margin-top: 14px;     /* tạo khoảng cách đẹp */
+    font-size: 18px;
+    letter-spacing: 1px;  /* THÊM cái này là hết “tật” */
+}
+.header-inner {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    position: relative;
+}
+
+.right {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+}
+
+/* style chung cho nút */
+.right a {
+    padding: 8px 16px;
+    text-decoration: none;
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+/* đăng nhập */
+.login {
+    background: #3498db;
+}
+
+.login:hover {
+    background: #2980b9;
+}
+
+/* đăng ký */
+.register {
+    background: #2ecc71;
+}
+
+.register:hover {
+    background: #27ae60;
+}
+/* Cho logo + text nằm ngang */
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Căn giữa chữ THƯ VIỆN */
+.header-inner h1 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.header-top {
+    padding: 20px;
+}
+
+.menu {
+    background: gold;
+    display: flex;
+    justify-content: center;
+}
+
+.menu a {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+.search {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    background: #444;
+}
+
+.search input {
+    width: 400px;
+    padding: 8px;
+}
+
+.search button {
+    padding: 8px 15px;
+    background: orange;
+    border: none;
+}
+
+/* LAYOUT */
+.container {
+    width: 1200px;
+    margin: auto;
+    display: flex;
+    gap: 20px;
+}
+
+/* LEFT */
+.main {
+    flex: 3;
+    background: white;
+    padding: 15px;
+}
+
+.banner img {
+    width: 100%;
+}
+
+.news-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.news-item img {
+    width: 100px;
+}
+
+/* BOOK */
+.books {
+    display: flex;
+    gap: 10px;
+}
+
+.books img {
+    width: 90px;
+}
+
+/* MAP */
+iframe {
+    width: 100%;
+    height: 250px;
+    border: none;
+}
+
+/* RIGHT */
+.sidebar {
+    flex: 1;
+}
+
+.box {
+    background: #f5e1a4;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+}
+
+.grid img {
+    width: 100%;
+}
+
+/* FOOTER */
+footer {
+    background: #ddd;
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+}
