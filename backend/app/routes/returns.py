@@ -1,3 +1,3 @@
 from flask import Blueprint
 
-returns_bp = Blueprint("reports", __name__)
+returns_bp = Blueprint("returns", __name__)
