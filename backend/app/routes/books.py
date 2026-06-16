@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from app.database import get_connection
+from app.response import success, error
 
 books_bp = Blueprint("books", __name__)
 
@@ -33,10 +34,7 @@ def get_books():
         
     conn.close()
     
-    return {
-        "success": True,
-        "data": books
-    }
+    return success(data=books)
 
 # Tìm kiếm sách theo isbn, tác giả, tên sách, thể loại
 # GET /api/books/search
@@ -47,10 +45,7 @@ def search_books():
     search_type = request.args.get("type", "all")
     
     if not keyword:
-        return {
-            "success": False,
-            "message": "Vui lòng nhập lại từ khóa tìm kiếm"
-        }, 400
+        return error("Vui lòng nhập lại từ khóa tìm kiếm", 400)
     
     conn = get_connection()
     cursor = conn.cursor()
@@ -82,10 +77,7 @@ def search_books():
         
     conn.close()
     
-    return {
-        "success": True,
-        "data": books
-    }
+    return success(data=books)
     
 # GET /api/books/<isbn>
 @books_bp.route("/api/books/<isbn>", methods=["GET"])
@@ -105,10 +97,7 @@ def get_book_by_isbn(isbn):
     conn.close()
     
     if row is None:
-        return {
-            "success": False,
-            "message": "Không tìm thấy sách!"
-        }, 404
+        return error("Không tìm thấy sách!", 404)
     
     result = {
         "isbn": row.ISBN,
@@ -121,16 +110,16 @@ def get_book_by_isbn(isbn):
         "the_loai": row.TheLoai
     }
     
-    return {
-        "success": True,
-        "data": result
-    }
+    return success(data=result)
 
 # Thêm sách
 # POST /api/books
 @books_bp.route("/api/books", methods=["POST"])
 def add_book():
     data = request.get_json()
+    
+    if not data:
+        return error("Dữ liệu gửi lên không hợp lệ", 400)
     
     isbn = data.get("isbn")
     ten_sach = data.get("ten_sach")
@@ -174,18 +163,12 @@ def add_book():
         
         conn.commit()
         
-        return {
-            "success": True,
-            "message": "Thêm sách thành công"
-        }, 201
+        return success(message="Thêm sách thành công", status=201)
         
     except Exception as e:
         conn.rollback()
         
-        return {
-            "success": False,
-            "message": str(e)
-        }, 400
+        return error(str(e), 400)
         
     finally:
         conn.close()
@@ -195,6 +178,9 @@ def add_book():
 @books_bp.route("/api/books/<isbn>", methods=["PUT"])
 def update_book(isbn):
     data = request.get_json()
+    
+    if not data:
+        return error("Dữ liệu gửi lên không hợp lệ", 400)
 
     ten_sach = data.get("ten_sach")
     ten_nxb = data.get("ten_nxb")
@@ -249,17 +235,11 @@ def update_book(isbn):
             
         conn.commit()
         
-        return {
-            "success": True,
-            "message": "Cập nhật sách thành công"
-        }
+        return success(message="Cập nhật sách thành công")
     except Exception as e:
         conn.rollback()
         
-        return {
-            "success": False,
-            "message": str(e)
-        }, 400
+        return error(str(e), 400)
     finally:
         conn.close()
         
@@ -279,19 +259,12 @@ def delete_book(isbn):
         
         conn.commit()
         
-        return {
-            "success": True,
-            "message": "Xóa đầu sách thành công!"
-        }
+        return success(message="Xóa đầu sách thành công!")
         
     except Exception as e:
         conn.rollback()
         
-        return {
-            "success": False,
-            "message": str(e)
-        }, 400
+        return error(str(e), 400)
         
     finally:
         conn.close()
-    

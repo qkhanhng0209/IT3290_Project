@@ -185,35 +185,6 @@ BEGIN
 END
 GO
 
-EXEC sp_AddCategoryToBook '3636-1818-6767', 'Testing';
-
-EXEC sp_AddAuthorToBook '3636-1818-6767', N'Nguyễn Quốc Khánh';
-EXEC sp_AddBook '3636-1818-6767', N'Sách Test', 1, 2025, 200, N'Mô tả sách', 100000;
-
-select * from vw_BookInfo
-select * from TheLoai
-select * from TacGia
-select * from TheLoai_DauSach
-select * from TacGia_DauSach
-select * from NXB
-select * from DauSach
-
-exec sp_AddBook '1000-1945-3636', N'Bút ký từ tầng hầm', N'Nhà Xuất Bản Trẻ',
-2026, 360, N'Kiệt tác mở đường cho chủ nghĩa hiện sinh của một cây bút bậc thầy', 167000;
-
-exec sp_AddAuthorToBook '1000-1945-3636', N'Fyodor Dostoyevsky';
-exec sp_AddCategoryToBook '1000-1945-3636', N'Văn học phương Tây';
-exec sp_AddCategoryToBook '1000-1945-3636', N'Văn học kinh điển';
-exec sp_AddCategoryToBook '1000-1945-3636', N'Hiện sinh';
-
-exec sp_AddBook '1001-1002-1003', N'Chiến tranh và Hòa bình', N'Nhà Xuất Bản Hội Nhà văn',
-2020, 1500, N'Một trong những cuốn tiểu thuyết vĩ đại nhất từng được viết ra', 1236000;
-
-exec sp_AddAuthorToBook '1001-1002-1003', N'Lev Tolstoy';
-exec sp_AddCategoryToBook '1001-1002-1003', N'Văn học phương Tây';
-exec sp_AddCategoryToBook '1001-1002-1003', N'Văn học kinh điển';
-exec sp_AddCategoryToBook '1001-1002-1003', N'Sử thi';
-
 -- sp cập nhật thông tin sách
 CREATE OR ALTER PROCEDURE sp_UpdateBook
 	@ISBN VARCHAR(20),
@@ -279,13 +250,6 @@ BEGIN
 END
 GO
 
-select * from vw_BookInfo
-select * from TheLoai
-select * from TacGia
-select * from TheLoai_DauSach
-select * from TacGia_DauSach
-select * from NXB
-select * from DauSach
 
 CREATE OR ALTER PROCEDURE sp_DeleteBook
 	@ISBN VARCHAR(20)

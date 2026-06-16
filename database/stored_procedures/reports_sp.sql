@@ -37,8 +37,6 @@ AS BEGIN
 END
 GO
 
-exec sp_ReportBooksByPublisher;
-
 CREATE OR ALTER PROCEDURE sp_ReportBooksByAuthor
 AS 
 BEGIN
@@ -104,11 +102,6 @@ BEGIN
 END
 GO
 
-EXEC sp_ReportBooksByCategory
-EXEC sp_ReportBooksByPublisher
-EXEC sp_ReportBooksByAuthor
-EXEC sp_ReportInventory
-
 CREATE OR ALTER PROCEDURE sp_TopBooks
 AS
 BEGIN
@@ -126,8 +119,6 @@ BEGIN
 END
 GO
 
-exec sp_TopBooks
-
 CREATE OR ALTER PROCEDURE sp_TopReaders
 AS
 BEGIN
@@ -144,4 +135,3 @@ BEGIN
 	ORDER BY TongSoSachMuon DESC, dg.HoTen;
 END
 GO
-exec sp_TopReaders

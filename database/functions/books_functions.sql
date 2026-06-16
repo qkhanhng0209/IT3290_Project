@@ -22,5 +22,3 @@ BEGIN
 	RETURN ISNULL(@AvailableCopies, 0);
 END
 GO
-
-select dbo.fn_GetAvailableCopies('978-604-1-10003-3')

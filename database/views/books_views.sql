@@ -24,5 +24,3 @@ SELECT ds.ISBN, ds.TenSach, nxb.TenNXB, ds.NamXuatBan, ds.GiaBia,
 FROM DauSach ds
 LEFT JOIN NXB nxb ON ds.MaSoNXB = nxb.MaSoNXB;
 GO
-
-select * from vw_BookInfo
