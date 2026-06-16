@@ -5,7 +5,6 @@ violations_bp = Blueprint('violations_bp', __name__)
 
 @violations_bp.route('/', methods=['GET'])
 def get_violations():
-    # Nguyên tắc chung: Luôn đóng kết nối Database nên phải khởi tạo conn = None trước
     conn = None
     try:
         conn = get_connection()
@@ -39,20 +38,17 @@ def get_violations():
                 "tong_no": float(row[4]) if row[4] else 0.0
             })
 
-        # Chuẩn JSON Response thành công theo quy ước
         return jsonify({
             "success": True,
             "data": danh_sach_vi_pham
         }), 200
 
     except Exception as e:
-        # Chuẩn JSON Response lỗi theo quy ước
         return jsonify({
             "success": False,
             "message": f"Lỗi truy vấn cơ sở dữ liệu: {str(e)}"
         }), 500
         
     finally:
-        # Luôn đóng kết nối Database sau khi sử dụng
         if conn:
             conn.close()
