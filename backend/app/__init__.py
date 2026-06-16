@@ -10,6 +10,7 @@ from app.routes.returns import returns_bp
 from app.routes.violations import violations_bp
 from app.routes.notifications import notifications_bp
 from app.routes.reports import reports_bp
+from app.routes.health import health_bp
 
 def create_app():
     app = Flask(__name__)
@@ -25,5 +26,6 @@ def create_app():
     app.register_blueprint(violations_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(reports_bp)
+    app.register_blueprint(health_bp)
 
     return app

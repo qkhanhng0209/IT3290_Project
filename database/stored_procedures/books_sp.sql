@@ -78,9 +78,6 @@ BEGIN
 END
 GO
 
-select * from vw_BookInfo
-select * from TacGia;
-
 -- SP thêm sách mới vào db
 CREATE OR ALTER PROCEDURE sp_AddBook
 	@ISBN VARCHAR(20),

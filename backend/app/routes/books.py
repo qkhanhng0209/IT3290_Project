@@ -13,28 +13,32 @@ def get_books():
     query = """
         EXEC sp_GetBooks
     """
-    
-    cursor.execute(query)
-    
-    rows = cursor.fetchall()
-    
-    books = []
-    
-    for row in rows:
-        books.append({
-            "isbn": row.ISBN,
-            "ten_sach": row.TenSach,
-            "nha_xuat_ban": row.TenNXB,
-            "nam_xuat_ban": row.NamXuatBan,
-            "gia_bia": float(row.GiaBia),
-            "so_luong": row.SoLuong,
-            "tac_gia": row.TacGia,
-            "the_loai": row.TheLoai
-        })
+    try:
+        cursor.execute(query)
         
-    conn.close()
+        rows = cursor.fetchall()
+        
+        books = []
+        
+        for row in rows:
+            books.append({
+                "isbn": row.ISBN,
+                "ten_sach": row.TenSach,
+                "nha_xuat_ban": row.TenNXB,
+                "nam_xuat_ban": row.NamXuatBan,
+                "gia_bia": float(row.GiaBia),
+                "so_luong": row.SoLuong,
+                "tac_gia": row.TacGia,
+                "the_loai": row.TheLoai
+            })
+            
+        return success(data=books)
     
-    return success(data=books)
+    except Exception as e:
+        return error(str(e), 500)
+    
+    finally:
+        conn.close()
 
 # Tìm kiếm sách theo isbn, tác giả, tên sách, thể loại
 # GET /api/books/search
@@ -55,29 +59,34 @@ def search_books():
         EXEC sp_SearchBooks ?, ?
     """
     
-    cursor.execute(
-        query, (keyword, search_type)
-    )
-    
-    rows = cursor.fetchall()
-    
-    books = []
-    
-    for row in rows:
-        books.append({
-            "isbn": row.ISBN,
-            "ten_sach": row.TenSach,
-            "nha_xuat_ban": row.TenNXB,
-            "nam_xuat_ban": row.NamXuatBan,
-            "gia_bia": float(row.GiaBia),
-            "so_luong": row.SoLuong,
-            "tac_gia": row.TacGia,
-            "the_loai": row.TheLoai
-        })
+    try:
+        cursor.execute(
+            query, (keyword, search_type)
+        )
         
-    conn.close()
+        rows = cursor.fetchall()
+        
+        books = []
+        
+        for row in rows:
+            books.append({
+                "isbn": row.ISBN,
+                "ten_sach": row.TenSach,
+                "nha_xuat_ban": row.TenNXB,
+                "nam_xuat_ban": row.NamXuatBan,
+                "gia_bia": float(row.GiaBia),
+                "so_luong": row.SoLuong,
+                "tac_gia": row.TacGia,
+                "the_loai": row.TheLoai
+            })
+            
+        return success(data=books)
     
-    return success(data=books)
+    except Exception as e:
+        return error(str(e), 500)
+    
+    finally:
+        conn.close()
     
 # GET /api/books/<isbn>
 @books_bp.route("/api/books/<isbn>", methods=["GET"])
@@ -90,27 +99,32 @@ def get_book_by_isbn(isbn):
         EXEC sp_GetBooksByISBN ?
     """
     
-    cursor.execute(query, (isbn,))
+    try:      
+        cursor.execute(query, (isbn,))
+        
+        row = cursor.fetchone()
+        
+        if row is None:
+            return error("Không tìm thấy sách!", 404)
+        
+        result = {
+            "isbn": row.ISBN,
+            "ten_sach": row.TenSach,
+            "nha_xuat_ban": row.TenNXB,
+            "nam_xuat_ban": row.NamXuatBan,
+            "gia_bia": float(row.GiaBia),
+            "so_luong": row.SoLuong,
+            "tac_gia": row.TacGia,
+            "the_loai": row.TheLoai
+        }
     
-    row = cursor.fetchone()
+        return success(data=result)
     
-    conn.close()
+    except Exception as e:
+        return error(str(e), 500)
     
-    if row is None:
-        return error("Không tìm thấy sách!", 404)
-    
-    result = {
-        "isbn": row.ISBN,
-        "ten_sach": row.TenSach,
-        "nha_xuat_ban": row.TenNXB,
-        "nam_xuat_ban": row.NamXuatBan,
-        "gia_bia": float(row.GiaBia),
-        "so_luong": row.SoLuong,
-        "tac_gia": row.TacGia,
-        "the_loai": row.TheLoai
-    }
-    
-    return success(data=result)
+    finally:
+        conn.close()
 
 # Thêm sách
 # POST /api/books
