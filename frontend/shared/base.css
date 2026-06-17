@@ -40,9 +40,9 @@ body {
 
 /* Dòng dưới */
 .text p:last-child {
-    margin-top: 14px;     /* tạo khoảng cách đẹp */
+    margin-top: 14px;    
     font-size: 18px;
-    letter-spacing: 1px;  /* THÊM cái này là hết “tật” */
+    letter-spacing: 1px;  
 }
 .header-inner {
     display: flex;
@@ -114,7 +114,48 @@ body {
     color: black;
     font-weight: bold;
 }
+.dropdown {
+    display: inline-flex; 
+    align-items: center;
+    position: relative;
+}
 
+.dropdown-btn {
+    padding: 10px 15px;    
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;        
+    left: 0;
+    background-color: #ffffff;
+    min-width: 150px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    z-index: 999;         
+}
+
+.dropdown-content a {
+    color: black !important;
+    padding: 10px 15px !important;
+    display: block !important; 
+    font-weight: normal;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #f0f0f0;
+}
+
+/* Hover để hiển thị */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
 .search {
     display: flex;
     justify-content: center;
