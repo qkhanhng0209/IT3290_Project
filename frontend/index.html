@@ -38,27 +38,27 @@
             </div>
         </div>
    <div class="right">
-    <a href="login.html" class="login">Đăng nhập</a>
-    <a href="register.html" class="register">Đăng ký</a>
+    <a href="auth/login.html" class="login">Đăng nhập</a>
+    <a href="auth/register.html" class="register">Đăng ký</a>
 </div>
 </div>
 </header>
 
 <!-- MENU -->
 <nav class="menu">
-    <a href="#">TRANG CHỦ</a>
-    <a href="#">SÁCH</a>
-    <a href="#" onclick="clickMenuPage('member.html')">THÀNH VIÊN</a>
+    <a href="#" onclick="clickMenuHome()">TRANG CHỦ</a>
+    <a href="#" onclick="clickMenuPage('books/books.html')">SÁCH</a>
+    <a href="#" onclick="clickMenuPage('members/members.html')">THÀNH VIÊN</a>
 <div class="dropdown">
         <a href="#" class="dropdown-btn">MƯỢN/TRẢ ▾</a>
         <div class="dropdown-content">
-            <a href="#">Mượn sách</a>
-            <a href="#">Trả sách</a>
+            <a href="#" onclick="clickMenuPage('borrowing/borrowing.html')">Mượn sách</a>
+            <a href="#" onclick="clickMenuPage('returns/returns.html')">Trả sách</a>
         </div>
     </div>
-    <a href="#">THÔNG BÁO</a>
-    <a href="#">VI PHẠM</a>
-    <a href="#">THỐNG KÊ</a>
+    <a href="#" onclick="clickMenuPage('notifications/notifications.html')">THÔNG BÁO</a>
+    <a href="#" onclick="clickMenuPage('violations/violations.html')">VI PHẠM</a>
+    <a href="#" onclick="clickMenuPage('reports/reports.html')">THỐNG KÊ</a>
 </nav>
 
 <!-- SEARCH -->
