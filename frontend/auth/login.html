@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIETNAM Library - Đăng nhập</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .auth-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .auth-header h2 {
+            color: #003366;
+            margin: 0 0 5px 0;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        /* Nút Đăng nhập màu Xanh dương theo ảnh mẫu */
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db; /* Màu xanh dương */
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-login:hover {
+            background-color: #2980b9;
+        }
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .auth-switch a {
+            color: #2b6cb0;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+    <div class="auth-header">
+        <h2>ĐĂNG NHẬP</h2>
+        <p>Hệ thống Quản lý Thư viện Việt Nam</p>
+    </div>
+    
+    <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+            <label>Tài khoản đăng nhập</label>
+            <input type="text" id="login-account" required placeholder="Mã độc giả, Email hoặc SĐT">
+        </div>
+        <div class="form-group">
+            <label>Mật khẩu</label>
+            <input type="password" id="login-password" required placeholder="Nhập mật khẩu">
+        </div>
+        <button type="submit" class="btn-login">Đăng nhập</button>
+    </form>
+    
+    <div class="auth-switch">
+        Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
+    </div>
+</div>
+
+<script>
+    function handleLogin(event) {
+        event.preventDefault();
+        const account = document.getElementById('login-account').value;
+        alert(`Đăng nhập thành công với tài khoản: ${account}`);
+        window.location.href = 'trang_chu.html'; 
+    }
+</script>
+</body>
+</html>
