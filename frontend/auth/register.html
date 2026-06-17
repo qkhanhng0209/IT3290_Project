@@ -74,6 +74,13 @@
             text-decoration: none;
             font-weight: bold;
         }
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+            min-height: 15px; /* Giữ chỗ để giao diện không bị giật khi hiện chữ */
+}
         .success-card {
             background: #edf7ed;
             color: #1e4620;
@@ -105,42 +112,35 @@
         <div class="reader-id" id="assigned-id"></div>
     </div>
     
-    <form onsubmit="handleRegister(event)">
-        <div class="form-group">
-            <label>Họ và tên</label>
-            <input type="text" required placeholder="Nguyễn Văn A">
-        </div>
-        <div class="form-group">
-            <label>Địa chỉ Email</label>com
-            <input type="email" required placeholder="anh.nv261234@gmail.com">
-        </div>
-        <div class="form-group">
-            <label>Số điện thoại</label>
-            <input type="tel" required placeholder="0912345678">
-        </div>
-        <div class="form-group">
-            <label>Tạo mật khẩu</label>
-            <input type="password" required placeholder="Tối thiểu 6 ký tự">
-        </div>
-        <button type="submit" class="btn-register">Đăng ký thông tin</button>
-    </form>
+   <form onsubmit="handleRegister(event)">
+    <div class="form-group">
+        <label>Họ và tên</label>
+        <input type="text" id="reg-name" required placeholder="Nguyễn Văn A">
+        <span class="error-message" id="name-error"></span>
+    </div>
+    <div class="form-group">
+        <label>Địa chỉ Email</label>
+        <input type="email" id="reg-email" required placeholder="anh.nv261234@gmail.com">
+        <span class="error-message" id="email-error"></span> 
+    </div>
+    <div class="form-group">
+        <label>Số điện thoại</label>
+        <input type="tel" id="reg-phone" required placeholder="0912345678">
+        <span class="error-message" id="phone-error"></span>
+    </div>
+    <div class="form-group">
+        <label>Tạo mật khẩu</label>
+        <input type="password" id="reg-password" required placeholder="Tối thiểu 6 ký tự">
+        <span class="error-message" id="password-error"></span>
+    </div>
+    <button type="submit" class="btn-register">Đăng ký thông tin</button>
+</form>
     
     <div class="auth-switch">
         Đã có tài khoản? <a href="login.html">Quay lại Đăng nhập</a>
     </div>
 </div>
 
-<script>
-    function handleRegister(event) {
-        event.preventDefault();
-        const randomNumbers = Math.floor(1000 + Math.random() * 9000);
-        const readerId = "VN" + randomNumbers;N
-
-        document.getElementById('assigned-id').innerText = readerId;
-        document.getElementById('register-success').classList.remove('hidden');
-
-        alert(`Đăng ký thành công!\nMã độc giả cấp mới: ${readerId}`);
-    }
-</script>
+<script src="register.js"></script>
 </body>
 </html>
