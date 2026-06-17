@@ -25,13 +25,40 @@
         }
         .auth-header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         .auth-header h2 {
             color: #003366;
             margin: 0 0 5px 0;
             font-size: 24px;
         }
+        
+        /* --- CSS CHO PHẦN CHUYỂN TAB CHUYÊN NGHIỆP --- */
+        .role-tabs {
+            display: flex;
+            background: #edf2f7;
+            padding: 4px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            color: #718096;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        /* Tab nào được chọn sẽ sáng lên màu xanh dương */
+        .tab-btn.active {
+            background: #3498db;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .form-group {
             margin-bottom: 18px;
         }
@@ -50,11 +77,10 @@
             font-size: 14px;
             box-sizing: border-box;
         }
-        /* Nút Đăng nhập màu Xanh dương theo ảnh mẫu */
         .btn-login {
             width: 100%;
             padding: 12px;
-            background-color: #3498db; /* Màu xanh dương */
+            background-color: #3498db;
             border: none;
             border-radius: 4px;
             color: white;
@@ -85,10 +111,15 @@
         <h2>ĐĂNG NHẬP</h2>
         <p>Hệ thống Quản lý Thư viện Việt Nam</p>
     </div>
+
+    <div class="role-tabs">
+        <div class="tab-btn active" onclick="switchRole('reader')">Độc giả</div>
+        <div class="tab-btn" onclick="switchRole('staff')">Nhân viên / Quản lý</div>
+    </div>
     
     <form onsubmit="handleLogin(event)">
         <div class="form-group">
-            <label>Tài khoản đăng nhập</label>
+            <label id="account-label">Tài khoản đăng nhập</label>
             <input type="text" id="login-account" required placeholder="Mã độc giả, Email hoặc SĐT">
         </div>
         <div class="form-group">
@@ -98,7 +129,7 @@
         <button type="submit" class="btn-login">Đăng nhập</button>
     </form>
     
-    <div class="auth-switch">
+    <div class="auth-switch" id="register-link-box">
         Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
     </div>
 </div>
