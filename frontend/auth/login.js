@@ -47,6 +47,6 @@ function handleLogin(event) {
         console.log("Nhân viên/Quản lý đang đăng nhập");
 
         alert(`Nhân viên đăng nhập thành công: ${account}`);
-        window.location.href = 'trang_chu.html';
+        window.location.href = 'IT3290_Project/frontend/index.html';
     }
 }
