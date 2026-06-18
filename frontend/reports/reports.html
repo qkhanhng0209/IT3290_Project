@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Báo cáo thống kê</title>
+    <link rel="stylesheet" href="../shared/base.css">
+
+    <style>
+        body {
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+
+        .reports-page {
+            padding: 20px;
+        }
+
+        .page-heading {
+            background: #f1c40f;
+            color: #111827;
+            padding: 16px 20px;
+            border-radius: 4px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .page-heading h1 {
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 0;
+        }
+
+        .page-heading p {
+            margin: 6px 0 0;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .message {
+            display: none;
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .message.success {
+            display: block;
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .message.error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .report-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 4px;
+            padding: 10px 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-tab {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-tab.active,
+        .btn-tab:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .summary-card {
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .summary-card span {
+            display: block;
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .summary-card strong {
+            display: block;
+            font-size: 24px;
+            color: #111827;
+        }
+
+        .panel {
+            display: none;
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 16px;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #111827;
+        }
+
+        .panel-header p {
+            margin: 4px 0 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        .report-table {
+            width: 100%;
+            min-width: 720px;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .report-table th,
+        .report-table td {
+            border: 1px solid #e5e7eb;
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .report-table th {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .report-table tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .muted {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .reports-page {
+                padding: 12px;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(140px, 1fr));
+            }
+        }
+
+        @media (max-width: 560px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="reports-page">
+        <section class="page-heading">
+            <h1>Báo cáo thống kê</h1>
+            <p>Theo dõi cơ cấu sách, tồn kho và các đầu sách/độc giả nổi bật.</p>
+        </section>
+
+        <div id="reportMessage" class="message"></div>
+
+        <section class="toolbar">
+            <div class="report-tabs" role="tablist" aria-label="Nhóm báo cáo">
+                <button class="btn btn-tab active" type="button" data-report-target="categoryPanel">Thể loại</button>
+                <button class="btn btn-tab" type="button" data-report-target="publisherPanel">NXB</button>
+                <button class="btn btn-tab" type="button" data-report-target="authorPanel">Tác giả</button>
+                <button class="btn btn-tab" type="button" data-report-target="inventoryPanel">Tồn kho</button>
+                <button class="btn btn-tab" type="button" data-report-target="topBooksPanel">Top sách</button>
+                <button class="btn btn-tab" type="button" data-report-target="topReadersPanel">Top độc giả</button>
+            </div>
+
+            <button id="refreshReportsBtn" class="btn btn-primary" type="button">Tải lại báo cáo</button>
+        </section>
+
+        <section class="summary-grid">
+            <div class="summary-card">
+                <span>Tổng đầu sách</span>
+                <strong id="totalTitles">-</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Tổng số cuốn</span>
+                <strong id="totalCopies">-</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Đang mượn</span>
+                <strong id="borrowedCopies">-</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Sách hỏng/mất</span>
+                <strong id="damagedCopies">-</strong>
+            </div>
+        </section>
+
+        <section id="categoryPanel" class="panel active">
+            <div class="panel-header">
+                <div>
+                    <h2>Sách theo thể loại</h2>
+                    <p>Thống kê số đầu sách và số cuốn theo từng thể loại.</p>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Thể loại</th>
+                            <th>Số lượng đầu sách</th>
+                            <th>Tổng số cuốn</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryReportBody">
+                        <tr>
+                            <td colspan="3">Đang tải dữ liệu...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="publisherPanel" class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Sách theo nhà xuất bản</h2>
+                    <p>Thống kê cơ cấu sách theo nhà xuất bản.</p>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Nhà xuất bản</th>
+                            <th>Số lượng đầu sách</th>
+                            <th>Tổng số cuốn</th>
+                        </tr>
+                    </thead>
+                    <tbody id="publisherReportBody">
+                        <tr>
+                            <td colspan="3">Đang tải dữ liệu...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="authorPanel" class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Sách theo tác giả</h2>
+                    <p>Thống kê số đầu sách và số cuốn theo từng tác giả.</p>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Tác giả</th>
+                            <th>Số lượng đầu sách</th>
+                            <th>Tổng số cuốn</th>
+                        </tr>
+                    </thead>
+                    <tbody id="authorReportBody">
+                        <tr>
+                            <td colspan="3">Đang tải dữ liệu...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="inventoryPanel" class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Báo cáo tồn kho</h2>
+                    <p>Theo dõi tổng số cuốn và tình trạng từng đầu sách.</p>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>ISBN</th>
+                            <th>Tên sách</th>
+                            <th>Tổng số cuốn</th>
+                            <th>Tốt</th>
+                            <th>Đang mượn</th>
+                            <th>Hỏng nhẹ</th>
+                            <th>Hỏng nặng</th>
+                            <th>Mất</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryReportBody">
+                        <tr>
+                            <td colspan="8">Đang tải dữ liệu...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="topBooksPanel" class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Top sách được mượn nhiều</h2>
+                    <p>Danh sách 10 đầu sách có số lượt mượn cao nhất.</p>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>ISBN</th>
+                            <th>Tên sách</th>
+                            <th>Số lượt mượn</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topBooksReportBody">
+                        <tr>
+                            <td colspan="3">Đang tải dữ liệu...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="topReadersPanel" class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Top độc giả tích cực</h2>
+                    <p>Danh sách 10 độc giả mượn nhiều sách nhất.</p>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Mã độc giả</th>
+                            <th>Họ tên</th>
+                            <th>Tổng số sách mượn</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topReadersReportBody">
+                        <tr>
+                            <td colspan="3">Đang tải dữ liệu...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="../shared/api.js"></script>
+    <script src="./reports.js"></script>
+</body>
+</html>

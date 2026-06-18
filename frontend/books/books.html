@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản lý sách</title>
+    <link rel="stylesheet" href="../shared/base.css">
+
+    <style>
+        body {
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+
+        .books-page {
+            padding: 20px;
+        }
+
+        .page-heading {
+            background: #f1c40f;
+            color: #111827;
+            padding: 16px 20px;
+            border-radius: 4px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .page-heading h1 {
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 0;
+        }
+
+        .page-heading p {
+            margin: 6px 0 0;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+            min-width: 320px;
+        }
+
+        .search-box input,
+        .search-box select,
+        .book-form input,
+        .book-form textarea {
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 14px;
+            background: #ffffff;
+        }
+
+        .search-box input {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 4px;
+            padding: 10px 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: #111827;
+        }
+
+        .btn-warning:hover {
+            background: #d68910;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(280px, 360px) 1fr;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .panel {
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 16px;
+        }
+
+        .panel h2 {
+            margin: 0 0 14px;
+            font-size: 18px;
+            color: #111827;
+        }
+
+        .book-form {
+            display: grid;
+            gap: 12px;
+        }
+
+        .field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .field label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #4b5563;
+        }
+
+        .book-form textarea {
+            min-height: 76px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .message {
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .message.success {
+            display: block;
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .message.error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        .books-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 920px;
+        }
+
+        .books-table th,
+        .books-table td {
+            border: 1px solid #e5e7eb;
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .books-table th {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .books-table tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .books-table .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .muted {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .books-page {
+                padding: 12px;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="books-page">
+        <section class="page-heading">
+            <h1>Quản lý sách</h1>
+            <p>Tìm kiếm, thêm mới, cập nhật và xóa đầu sách trong thư viện.</p>
+        </section>
+
+        <div id="bookMessage" class="message"></div>
+
+        <section class="toolbar">
+            <form id="searchForm" class="search-box">
+                <select id="searchType" aria-label="Loại tìm kiếm">
+                    <option value="all">Tất cả</option>
+                    <option value="isbn">ISBN</option>
+                    <option value="title">Tên sách</option>
+                    <option value="author">Tác giả</option>
+                    <option value="category">Thể loại</option>
+                </select>
+
+                <input
+                    id="searchKeyword"
+                    type="search"
+                    placeholder="Nhập ISBN, tên sách, tác giả hoặc thể loại">
+
+                <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                <button class="btn btn-warning" id="resetSearchBtn" type="button">Tải lại</button>
+            </form>
+
+            <button class="btn btn-success" id="newBookBtn" type="button">Thêm sách mới</button>
+        </section>
+
+        <section class="layout">
+            <aside class="panel">
+                <h2 id="formTitle">Thêm sách</h2>
+
+                <form id="bookForm" class="book-form">
+                    <div class="field">
+                        <label for="isbn">ISBN</label>
+                        <input id="isbn" name="isbn" type="text" maxlength="20" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="tenSach">Tên sách</label>
+                        <input id="tenSach" name="ten_sach" type="text" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="tenNxb">Nhà xuất bản</label>
+                        <input id="tenNxb" name="ten_nxb" type="text" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="namXuatBan">Năm xuất bản</label>
+                        <input id="namXuatBan" name="nam_xuat_ban" type="number" min="1" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="soTrang">Số trang</label>
+                        <input id="soTrang" name="so_trang" type="number" min="1">
+                    </div>
+
+                    <div class="field">
+                        <label for="giaBia">Giá bìa</label>
+                        <input id="giaBia" name="gia_bia" type="number" min="1" step="1" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="tacGia">Tác giả</label>
+                        <input id="tacGia" name="tac_gia" type="text" placeholder="Nguyễn Nhật Ánh, Nam Cao">
+                        <span class="muted">Nhập nhiều tác giả, cách nhau bằng dấu phẩy.</span>
+                    </div>
+
+                    <div class="field">
+                        <label for="theLoai">Thể loại</label>
+                        <input id="theLoai" name="the_loai" type="text" placeholder="Văn học, Thiếu nhi">
+                        <span class="muted">Nhập nhiều thể loại, cách nhau bằng dấu phẩy.</span>
+                    </div>
+
+                    <div class="field">
+                        <label for="moTa">Mô tả</label>
+                        <textarea id="moTa" name="mo_ta"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-success" id="saveBookBtn" type="submit">Lưu sách</button>
+                        <button class="btn btn-warning" id="cancelEditBtn" type="button">Hủy</button>
+                    </div>
+                </form>
+            </aside>
+
+            <section class="panel">
+                <h2>Danh sách sách</h2>
+
+                <div class="table-wrap">
+                    <table class="books-table">
+                        <thead>
+                            <tr>
+                                <th>ISBN</th>
+                                <th>Tên sách</th>
+                                <th>Nhà xuất bản</th>
+                                <th>Năm</th>
+                                <th>Giá bìa</th>
+                                <th>Số lượng</th>
+                                <th>Tác giả</th>
+                                <th>Thể loại</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booksTableBody">
+                            <tr>
+                                <td colspan="9">Đang tải dữ liệu...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <script src="../shared/api.js"></script>
+    <script src="./books.js"></script>
+</body>
+</html>

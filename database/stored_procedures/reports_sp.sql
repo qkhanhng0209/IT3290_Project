@@ -37,6 +37,7 @@ AS BEGIN
 END
 GO
 
+-- Thống kê sách theo Tác giả
 CREATE OR ALTER PROCEDURE sp_ReportBooksByAuthor
 AS 
 BEGIN
@@ -102,6 +103,7 @@ BEGIN
 END
 GO
 
+-- Thống kê Top 10 đầu sách được mượn nhiều nhất
 CREATE OR ALTER PROCEDURE sp_TopBooks
 AS
 BEGIN
@@ -119,6 +121,7 @@ BEGIN
 END
 GO
 
+-- Thống kê top 10 độc giả tích cực nhất
 CREATE OR ALTER PROCEDURE sp_TopReaders
 AS
 BEGIN
