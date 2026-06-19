@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUST Library - Thông báo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .main-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 700px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+        .header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #edf2f7;
+        }
+        .header h2 {
+            color: #003366;
+            margin: 0 0 5px 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 0;
+            color: #718096;
+            font-size: 14px;
+        }
+        .noti-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            transition: transform 0.2s;
+        }
+        .noti-box:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .noti-KhoaThe {
+            border-left: 5px solid #e53e3e; /* Đỏ cảnh báo */
+        }
+        .noti-NhacTraSach {
+            border-left: 5px solid #d69e2e; /* Vàng nhắc nhở */
+        }
+        .noti-title {
+            margin: 0 0 8px 0;
+            color: #2d3748;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .noti-content {
+            margin: 0;
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .noti-date {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header">
+        <h2>CHUÔNG THÔNG BÁO 🔔</h2>
+        <p>Hệ thống Quản lý Thư viện HUST</p>
+    </div>
+
+    <div id="notification-list">
+        <div style="text-align:center; color:#718096;">Đang tải thông báo...</div>
+    </div>
+</div>
+
+<script src="notifications.js"></script>
+</body>
+</html>

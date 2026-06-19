@@ -4,12 +4,19 @@ Project môn Cơ sở dữ liệu, xây dựng hệ thống quản lý thư vi�
 
 ```text
 Frontend (HTML/CSS/JavaScript)
+# Quy Ước Phát Triển Dự Án
+
+## 1. Kiến trúc hệ thống
+
+```text
+Frontend (HTML/CSS/JS)
         ↓
 Flask REST API
         ↓
 MS SQL Server
 ```
 
+<<<<<<< HEAD
 Frontend chỉ gọi API thông qua HTTP request. Backend Flask xử lý nghiệp vụ và truy vấn cơ sở dữ liệu. Frontend không truy cập trực tiếp vào database.
 
 ---
@@ -214,6 +221,41 @@ Frontend nên đọc dữ liệu từ `response.data`, không nên giả định
 ---
 
 ## 8. Quy ước API
+=======
+* Frontend chỉ gọi API thông qua HTTP Request.
+* Backend Flask xử lý nghiệp vụ và truy vấn cơ sở dữ liệu.
+* Không cho phép Frontend truy cập trực tiếp vào Database.
+
+---
+
+## 2. Cấu trúc Backend
+
+```text
+backend/
+├── app/
+│   ├── routes/
+│   │   ├── auth.py
+│   │   ├── books.py
+│   │   ├── borrowing.py
+│   │   ├── members.py
+│   │   ├── notifications.py
+│   │   ├── reports.py
+│   │   ├── returns.py
+│   │   └── violations.py
+│   ├── __init__.py
+│   ├── config.py
+│   └── database.py
+├── requirements.txt
+└── run.py
+```
+
+Mỗi thành viên chỉ làm việc trên module được phân công.
+Cài đặt những thư viện trong file requirements.txt
+
+---
+
+## 3. Quy Ước API
+>>>>>>> feature/violations
 
 ### Authentication
 
@@ -229,7 +271,11 @@ PUT  /api/auth/profile
 ```text
 GET    /api/books
 GET    /api/books/<isbn>
+<<<<<<< HEAD
 GET    /api/books/search?q=<keyword>&type=<all|isbn|title|author|category>
+=======
+GET    /api/books/search
+>>>>>>> feature/violations
 POST   /api/books
 PUT    /api/books/<isbn>
 DELETE /api/books/<isbn>
@@ -249,16 +295,26 @@ DELETE /api/members/<id>
 
 ```text
 GET  /api/borrowing
+<<<<<<< HEAD
 GET  /api/borrowing/<id>
 POST /api/borrowing
 PUT  /api/borrowing/<id>/pickup
+=======
+POST /api/borrowing
+PUT  /api/borrowing/<id>
+>>>>>>> feature/violations
 ```
 
 ### Returns
 
 ```text
+<<<<<<< HEAD
 GET /api/returns/<id>
 PUT /api/returns/<id>
+=======
+GET  /api/returns
+POST /api/returns
+>>>>>>> feature/violations
 ```
 
 ### Violations
@@ -271,26 +327,76 @@ POST /api/violations
 ### Notifications
 
 ```text
+<<<<<<< HEAD
 GET /api/notifications
 PUT /api/notifications/<id>
+=======
+GET  /api/notifications
+PUT  /api/notifications/<id>
+>>>>>>> feature/violations
 ```
 
 ### Reports
 
 ```text
+<<<<<<< HEAD
 GET /api/reports/books-by-category
 GET /api/reports/books-by-publisher
 GET /api/reports/books-by-author
 GET /api/reports/inventory
 GET /api/reports/top-books
 GET /api/reports/top-readers
+=======
+GET /api/reports/top-books
+GET /api/reports/top-readers
+GET /api/reports/overdue-books
+GET /api/reports/fines
+GET /api/reports/statistics
+>>>>>>> feature/violations
 ```
 
 ---
 
+<<<<<<< HEAD
 ## 9. Quy ước backend
 
 Tất cả module phải dùng hàm kết nối chung:
+=======
+## 4. Chuẩn JSON Response
+
+### Thành công
+
+```json
+{
+    "success": true,
+    "data": {}
+}
+```
+
+### Thành công có danh sách dữ liệu
+
+```json
+{
+    "success": true,
+    "data": []
+}
+```
+
+### Lỗi
+
+```json
+{
+    "success": false,
+    "message": "Mô tả lỗi"
+}
+```
+
+---
+
+## 5. Kết Nối Database
+
+Tất cả module phải sử dụng:
+>>>>>>> feature/violations
 
 ```python
 from app.database import get_connection
@@ -302,6 +408,7 @@ Ví dụ:
 conn = get_connection()
 cursor = conn.cursor()
 
+<<<<<<< HEAD
 try:
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -338,17 +445,51 @@ Mỗi thành viên ưu tiên làm trong module được phân công. Nếu sửa
 ## 11. Quy tắc Git
 
 Nhánh chính:
+=======
+cursor.execute(query)
+
+conn.close()
+```
+
+Không được tự tạo hàm kết nối riêng trong từng module.
+
+---
+
+## 6. Biến Môi Trường
+
+Thông tin kết nối Database được lưu trong file `.env`.
+
+Ví dụ:
+
+```env
+DB_SERVER=localhost
+DB_NAME=QuanLyThuVien
+```
+
+Không commit thông tin tài khoản hoặc mật khẩu Database lên Git.
+
+---
+
+## 7. Quy Tắc Git
+
+### Nhánh chính
+>>>>>>> feature/violations
 
 ```text
 main
 └── dev
 ```
 
+<<<<<<< HEAD
 Nhánh chức năng:
+=======
+### Nhánh chức năng
+>>>>>>> feature/violations
 
 ```text
 feature/books
 feature/reports
+<<<<<<< HEAD
 feature/login
 feature/members
 feature/borrowing
@@ -373,17 +514,43 @@ Không commit trực tiếp lên `main`.
 ## 12. Quy ước đặt tên
 
 Tên bảng SQL dùng PascalCase:
+=======
+...
+có thể đặt tên nhánh khác đi nếu cần fix bug, thay đổi gì đấy, nhưng cần rõ ràng 
+```
+
+### Quy trình làm việc
+
+1. Pull code mới nhất từ `dev`.
+2. Tạo hoặc cập nhật nhánh `feature/...`.
+3. Commit và Push.
+4. Merge vào `dev`.
+5. Không commit trực tiếp lên `main`.
+
+---
+
+## 8. Quy Ước Đặt Tên
+
+### Tên bảng SQL
+>>>>>>> feature/violations
 
 ```text
 DocGia
 NhanVien
 DauSach
+<<<<<<< HEAD
 CuonSach
+=======
+>>>>>>> feature/violations
 PhieuMuon
 ThongBao
 ```
 
+<<<<<<< HEAD
 Tên biến Python/JavaScript dùng snake_case cho dữ liệu backend/database:
+=======
+### Tên biến Python
+>>>>>>> feature/violations
 
 ```python
 ma_doc_gia
@@ -391,7 +558,11 @@ tong_tien_phat
 ngay_muon
 ```
 
+<<<<<<< HEAD
 Tên file JavaScript theo module:
+=======
+### Tên file JavaScript
+>>>>>>> feature/violations
 
 ```text
 books.js
@@ -399,7 +570,11 @@ reports.js
 members.js
 ```
 
+<<<<<<< HEAD
 Tên Blueprint:
+=======
+### Tên Blueprint
+>>>>>>> feature/violations
 
 ```python
 books_bp
@@ -410,6 +585,7 @@ auth_bp
 
 ---
 
+<<<<<<< HEAD
 ## 13. Checklist trước khi merge
 
 Trước khi merge vào `dev`, kiểm tra:
@@ -421,3 +597,13 @@ Trước khi merge vào `dev`, kiểm tra:
 - Không commit `.env`, `venv/`, `__pycache__/`.
 - Không để lệnh test hoặc dữ liệu nháp trong file deploy SQL.
 - Chức năng demo được trên máy local.
+=======
+## 9. Nguyên Tắc Chung
+
+* Mỗi chức năng nằm trong module riêng.
+* Không sửa code của thành viên khác nếu chưa trao đổi.
+* Tất cả API phải trả dữ liệu dạng JSON.
+* Luôn đóng kết nối Database sau khi sử dụng.
+* Code phải có comment ở các phần xử lý nghiệp vụ quan trọng.
+* Kiểm tra chức năng trước khi merge lên nhánh `dev`.
+>>>>>>> feature/violations

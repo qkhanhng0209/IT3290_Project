@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUST Library - Quản lý Vi phạm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .main-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 1000px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #edf2f7;
+        }
+        .header-title h2 {
+            color: #003366;
+            margin: 0 0 5px 0;
+            font-size: 24px;
+        }
+        .header-title p {
+            margin: 0;
+            color: #718096;
+            font-size: 14px;
+        }
+        .btn-action {
+            padding: 12px 20px;
+            background-color: #e53e3e; /* Đỏ cảnh báo */
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-action:hover {
+            background-color: #c53030;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #cbd5e0;
+            font-size: 14px;
+            color: #4a5568;
+        }
+        th {
+            background-color: #edf2f7;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .text-danger {
+            color: #e53e3e;
+            font-weight: bold;
+        }
+        .empty-msg {
+            text-align: center;
+            padding: 20px;
+            color: #718096;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header">
+        <div class="header-title">
+            <h2>DANH SÁCH VI PHẠM</h2>
+            <p>Hệ thống Quản lý Thư viện HUST</p>
+        </div>
+        <button class="btn-action" onclick="triggerViolations()">🚨 Quét Vi Phạm Tự Động</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Mã Độc Giả</th>
+                <th>Họ Tên</th>
+                <th>Mã Sách</th>
+                <th>Hạn Trả</th>
+                <th>Tiền Phạt</th>
+                <th>Tình Trạng</th>
+            </tr>
+        </thead>
+        <tbody id="violation-list">
+            <tr>
+                <td colspan="6" class="empty-msg">Đang tải dữ liệu...</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="violations.js"></script>
+</body>
+</html>
