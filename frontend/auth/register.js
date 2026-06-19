@@ -24,23 +24,49 @@ document.getElementById('reg-phone').addEventListener('blur', function() {
     }
 });
 
-function handleRegister(event) {
+async function handleRegister(event) {
     event.preventDefault(); 
 
     const email = document.getElementById('reg-email').value.trim();
     const phone = document.getElementById('reg-phone').value.trim();
     
+    // 1. Chặn lại nếu các trường nhập liệu đang có lỗi hiển thị
     if (document.getElementById('email-error').innerText !== "" || 
         document.getElementById('phone-error').innerText !== "") {
         alert("Vui lòng sửa các lỗi đỏ trên màn hình trước khi đăng ký!");
         return;
     }
 
-    const randomNumbers = Math.floor(1000 + Math.random() * 9000);
-    const readerId = "VN" + randomNumbers;
+    // 2. Gom dữ liệu để chuẩn bị gửi lên API Backend
+    const registerData = {
+        email: email,
+        phone: phone
+        // Thêm các trường khác nếu Form của bạn có (ví dụ: ho_ten, dia_chi...)
+    };
 
-    document.getElementById('assigned-id').innerText = readerId;
-    document.getElementById('register-success').classList.remove('hidden');
+    try {
+        document.getElementById('assigned-id').innerText = "Đang cấp phát mã...";
+        
+        const response = await window.API.auth.registerReader(registerData);
 
-    alert(`Đăng ký thành công!\nMã độc giả cấp mới: ${readerId}`);
+        if (response.success || response.status === "success") {
+            
+            const readerId = response.data.ma_doc_gia; 
+
+            document.getElementById('assigned-id').innerText = readerId;
+            document.getElementById('register-success').classList.remove('hidden');
+
+            alert(`Đăng ký thành công!\nMã độc giả cấp mới: ${readerId}`);
+            
+            
+        } else {
+            document.getElementById('assigned-id').innerText = "Lỗi!";
+            alert("Đăng ký thất bại: " + response.message);
+        }
+
+    } catch (error) {
+        console.error("Lỗi hệ thống:", error);
+        document.getElementById('assigned-id').innerText = "Lỗi!";
+        alert("Không thể kết nối đến máy chủ Backend. Vui lòng thử lại sau!");
+    }
 }
