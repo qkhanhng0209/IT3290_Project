@@ -1,6 +1,7 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from app.config import Config
 from flask_cors import CORS
+import os
 
 from app.routes.auth import auth_bp
 from app.routes.books import books_bp
@@ -27,5 +28,17 @@ def create_app():
     app.register_blueprint(notifications_bp)
     app.register_blueprint(reports_bp)
     app.register_blueprint(health_bp)
+    
+    frontend_dir = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "..", "frontend")
+    )
+    
+    @app.route("/")
+    def index():
+        return send_from_directory(frontend_dir, "index.html")
+    
+    @app.route("/<path:filename>")
+    def serve_frontend(filename):
+        return send_from_directory(frontend_dir, filename)
 
     return app
