@@ -89,6 +89,41 @@ function registerReader(reader) {
     });
 }
 
+// Members API functions
+function getMembers() {
+    return apiRequest("/members");
+}
+
+function getMemberById(maDocGia) {
+    return apiRequest(`/members/${maDocGia}`);
+}
+
+function addMember(member) {
+    return apiRequest("/members", {
+        method: "POST",
+        body: JSON.stringify(member)
+    });
+}
+
+function updateMember(maDocGia, member) {
+    return apiRequest(`/members/${maDocGia}`, {
+        method: "PUT",
+        body: JSON.stringify(member)
+    });
+}
+
+function deleteMember(maDocGia) {
+    return apiRequest(`/members/${maDocGia}`, {
+        method: "DELETE"
+    });
+}
+
+function activateMember(maDocGia) {
+    return apiRequest(`/members/${maDocGia}/activate`, {
+        method: "PUT"
+    });
+}
+
 window.apiRequest = apiRequest;
 
 window.API = {
@@ -104,5 +139,13 @@ window.API = {
         addBook,
         updateBook,
         deleteBook
+    },
+    members: {
+        getMembers,
+        getMemberById,
+        addMember,
+        updateMember,
+        deleteMember,
+        activateMember
     }
 };
