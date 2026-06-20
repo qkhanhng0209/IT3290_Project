@@ -1,3 +1,4 @@
+// Load members when page is ready
 document.addEventListener("DOMContentLoaded", function() {
     const role = localStorage.getItem('userRole') || 'staff';
     const welcomeText = document.getElementById('welcome-role');
@@ -11,19 +12,18 @@ document.addEventListener("DOMContentLoaded", function() {
         welcomeText.style.color = "#e74c3c";
     }
 
-    fetchMembers();
+    loadMembers();
 });
 
-async function fetchMembers() {
+// Load all members from API using shared API
+async function loadMembers() {
     try {
-        const res = await fetch('/api/members/');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        renderMembers(data);
+        const members = await API.members.getMembers();
+        renderMembers(members);
     } catch (err) {
         console.error('Không thể tải danh sách độc giả:', err);
         const tbody = document.getElementById('member-table-body');
-        tbody.innerHTML = `<tr><td colspan="10">Lỗi khi tải dữ liệu độc giả.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10">Lỗi khi tải dữ liệu độc giả: ${err.message}</td></tr>`;
     }
 }
 
@@ -101,30 +101,20 @@ function editMember(id) {
 async function deleteMember(id) {
     if (!confirm(`Bạn có chắc chắn muốn xóa độc giả ${id}?`)) return;
     try {
-        const res = await fetch(`/api/members/${id}`, { method: 'DELETE' });
-        if (res.ok) {
-            alert('Xóa thành công');
-            fetchMembers();
-        } else {
-            const txt = await res.text();
-            alert('Xóa thất bại: ' + (txt || res.status));
-        }
+        await API.members.deleteMember(id);
+        alert('Xóa thành công');
+        loadMembers();
     } catch (err) {
-        alert('Lỗi khi gọi API xóa: ' + err.message);
+        alert('Lỗi khi xóa: ' + err.message);
     }
 }
 
 async function activateMember(id) {
     try {
-        const res = await fetch(`/api/members/activate/${id}`, { method: 'PUT' });
-        const j = await res.json().catch(() => null);
-        if (res.ok) {
-            alert((j && j.message) ? j.message : 'Kích hoạt thành công');
-            fetchMembers();
-        } else {
-            alert('Kích hoạt thất bại: ' + (j && j.message ? j.message : res.status));
-        }
+        await API.members.activateMember(id);
+        alert('Kích hoạt thành công');
+        loadMembers();
     } catch (err) {
-        alert('Lỗi khi gọi API kích hoạt: ' + err.message);
+        alert('Lỗi khi kích hoạt: ' + err.message);
     }
 }
