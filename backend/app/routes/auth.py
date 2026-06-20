@@ -1,87 +1,101 @@
-# backend/app/routes/auth.py
-from flask import Blueprint, request, jsonify
-from app.database import get_connection 
+from flask import Blueprint, request
+from app.database import get_connection
+from app.response import success, error
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
-# --- 1. API ĐĂNG KÝ ĐỘC GIẢ ---
+
 @auth_bp.route('/register', methods=['POST'])
 def register_reader():
-    data = request.get_json()
-    ma_doc_gia = data.get('maDocGia')
+    data = request.get_json() or {}
     mat_khau = data.get('matKhau')
     ho_ten = data.get('hoTen')
     email = data.get('email')
     so_dien_thoai = data.get('soDienThoai')
 
-    conn = get_connection()  # Đã sửa
-    if not conn:
-        return jsonify({"message": "Không thể kết nối cơ sở dữ liệu"}), 500
+    if not all([mat_khau, ho_ten, email, so_dien_thoai]):
+        return error("Thieu thong tin dang ky", 400)
 
-    cursor = conn.cursor()
+    conn = None
     try:
+        conn = get_connection()
+        cursor = conn.cursor()
         cursor.execute(
-            "EXEC sp_RegisterDocGia @MaDocGia=?, @MatKhau=?, @HoTen=?, @Email=?, @SoDienThoai=?",
-            (ma_doc_gia, mat_khau, ho_ten, email, so_dien_thoai)
+            "EXEC sp_RegisterDocGia @MatKhau=?, @HoTen=?, @Email=?, @SoDienThoai=?",
+            (mat_khau, ho_ten, email, so_dien_thoai)
         )
         row = cursor.fetchone()
         conn.commit()
 
         if row and row[0] == 'SUCCESS':
-            return jsonify({
-                "status": "success",
-                "maDocGia": ma_doc_gia,
-                "message": "Đăng ký tài khoản thành công!"
-            }), 201
-            
+            return success(
+                data={"maDocGia": row[2]},
+                message="Dang ky tai khoan thanh cong!",
+                status=201
+            )
+
+        return error("Dang ky khong thanh cong", 400)
     except Exception as e:
         error_msg = str(e).split(']')[-1].strip()
-        return jsonify({"message": error_msg}), 400
+        return error(error_msg, 400)
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
-# --- 2. API ĐĂNG NHẬP ĐỘC GIẢ ---
+
 @auth_bp.route('/login-reader', methods=['POST'])
 def login_reader():
-    data = request.get_json()
+    data = request.get_json() or {}
     username = data.get('username')
     password = data.get('password')
 
-    conn = get_connection()  # Đã sửa
-    cursor = conn.cursor()
-    
-    cursor.execute("EXEC sp_LoginDocGia @MaDocGia=?, @MatKhau=?", (username, password))
-    row = cursor.fetchone()
+    if not username or not password:
+        return error("Thieu tai khoan hoac mat khau", 400)
 
-    if not row:
-        conn.close()
-        return jsonify({"message": "Mã độc giả hoặc mật khẩu không chính xác!"}), 401
+    conn = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("EXEC sp_LoginDocGia @Username=?, @MatKhau=?", (username, password))
+        row = cursor.fetchone()
 
-    columns = [column[0] for column in cursor.description]
-    user_info = dict(zip(columns, row))
-    
-    conn.close()
-    return jsonify({"status": "success", "role": "reader", "user": user_info}), 200
+        if not row:
+            return error("Ma doc gia, email, so dien thoai hoac mat khau khong chinh xac!", 401)
 
-# --- 3. API ĐĂNG NHẬP NHÂN VIÊN ---
+        columns = [column[0] for column in cursor.description]
+        user_info = dict(zip(columns, row))
+        return success(data={"role": "reader", "user": user_info})
+    except Exception as e:
+        return error(str(e), 500)
+    finally:
+        if conn:
+            conn.close()
+
+
 @auth_bp.route('/login-employee', methods=['POST'])
 def login_employee():
-    data = request.get_json()
+    data = request.get_json() or {}
     username = data.get('username')
     password = data.get('password')
 
-    conn = get_connection()  # Đã sửa
-    cursor = conn.cursor()
-    
-    cursor.execute("EXEC sp_LoginNhanVien @MaNhanVien=?, @MatKhau=?", (username, password))
-    row = cursor.fetchone()
+    if not username or not password:
+        return error("Thieu tai khoan hoac mat khau", 400)
 
-    if not row:
-        conn.close()
-        return jsonify({"message": "Mã nhân viên hoặc mật khẩu không chính xác!"}), 401
+    conn = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("EXEC sp_LoginNhanVien @Username=?, @MatKhau=?", (username, password))
+        row = cursor.fetchone()
 
-    columns = [column[0] for column in cursor.description]
-    employee_info = dict(zip(columns, row))
-    
-    conn.close()
-    return jsonify({"status": "success", "role": "employee", "user": employee_info}), 200
+        if not row:
+            return error("Ma nhan vien, email hoac mat khau khong chinh xac!", 401)
+
+        columns = [column[0] for column in cursor.description]
+        employee_info = dict(zip(columns, row))
+        return success(data={"role": "employee", "user": employee_info})
+    except Exception as e:
+        return error(str(e), 500)
+    finally:
+        if conn:
+            conn.close()
