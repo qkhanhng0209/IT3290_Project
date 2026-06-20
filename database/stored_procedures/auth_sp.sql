@@ -1,78 +1,112 @@
+USE QuanLyThuVien
+GO
+
 CREATE OR ALTER PROCEDURE sp_RegisterDocGia
-    @MaDocGia VARCHAR(50),
-    @MatKhau VARCHAR(255),
+    @MatKhau VARCHAR(100),
     @HoTen NVARCHAR(100),
     @Email VARCHAR(100),
-    @SoDienThoai VARCHAR(20)
+    @SoDienThoai VARCHAR(15)
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (SELECT 1 FROM DocGia WHERE MaDocGia = @MaDocGia)
+    IF @MatKhau IS NULL OR LEN(LTRIM(RTRIM(@MatKhau))) = 0
+       OR @HoTen IS NULL OR LEN(LTRIM(RTRIM(@HoTen))) = 0
+       OR @Email IS NULL OR LEN(LTRIM(RTRIM(@Email))) = 0
+       OR @SoDienThoai IS NULL OR LEN(LTRIM(RTRIM(@SoDienThoai))) = 0
     BEGIN
-        RAISERROR(N'Mã độc giả bị trùng lặp hệ thống, vui lòng thử lại!', 16, 1);
+        RAISERROR(N'Thieu thong tin dang ky!', 16, 1);
         RETURN;
     END
 
     IF EXISTS (SELECT 1 FROM DocGia WHERE Email = @Email)
     BEGIN
-        RAISERROR(N'Địa chỉ Email này đã được sử dụng!', 16, 1);
+        RAISERROR(N'Email nay da duoc su dung!', 16, 1);
+        RETURN;
+    END
+
+    IF EXISTS (SELECT 1 FROM DocGia WHERE SoDienThoai = @SoDienThoai)
+    BEGIN
+        RAISERROR(N'So dien thoai nay da duoc su dung!', 16, 1);
         RETURN;
     END
 
     INSERT INTO DocGia (
-        MaDocGia, 
-        MatKhau, 
-        HoTen, 
-        GioiTinh, 
-        Email, 
-        SoDienThoai, 
-        NgayCapThe, 
-        NgayHetHan, 
-        TongNo, 
+        MatKhau,
+        HoTen,
+        GioiTinh,
+        Email,
+        SoDienThoai,
+        NgayCapThe,
+        NgayHetHan,
+        TongNo,
         TrangThaiThe
     )
     VALUES (
-        @MaDocGia,
         @MatKhau,
         @HoTen,
-        NULL, 
+        NULL,
         @Email,
         @SoDienThoai,
-        GETDATE(), 
-        DATEADD(year, 1, GETDATE()), 
+        CAST(GETDATE() AS DATE),
+        DATEADD(year, 1, CAST(GETDATE() AS DATE)),
         0,
+        N'Hoat Dong'
     );
 
-    SELECT 'SUCCESS' AS Status, N'Đăng ký tài khoản thành công!' AS Message;
+    SELECT
+        'SUCCESS' AS Status,
+        N'Dang ky tai khoan thanh cong!' AS Message,
+        CONVERT(INT, SCOPE_IDENTITY()) AS MaDocGia;
 END;
 GO
 
 CREATE OR ALTER PROCEDURE sp_LoginDocGia
-    @MaDocGia VARCHAR(50),
-    @MatKhau VARCHAR(255)
+    @Username VARCHAR(100),
+    @MatKhau VARCHAR(100)
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Kiểm tra thông tin đăng nhập tài khoản độc giả
-    SELECT MaDocGia, HoTen, Email, SoDienThoai, TrangThaiThe, NgayHetHan, TongNo
+    SELECT
+        MaDocGia,
+        HoTen,
+        GioiTinh,
+        Email,
+        SoDienThoai,
+        TrangThaiThe,
+        NgayCapThe,
+        NgayHetHan,
+        TongNo
     FROM DocGia
-    WHERE MaDocGia = @MaDocGia 
-      AND MatKhau = @MatKhau;
+    WHERE
+        MatKhau = @MatKhau
+        AND (
+            CONVERT(VARCHAR(50), MaDocGia) = @Username
+            OR Email = @Username
+            OR SoDienThoai = @Username
+        );
 END;
 GO
 
 CREATE OR ALTER PROCEDURE sp_LoginNhanVien
-    @MaNhanVien VARCHAR(50),
+    @Username VARCHAR(100),
     @MatKhau VARCHAR(255)
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT MaNhanVien, HoTen, Email, ChucVu
+    SELECT
+        MaNhanVien,
+        HoTen,
+        Email,
+        ChucVu
     FROM NhanVien
-    WHERE MaNhanVien = @MaNhanVien 
-      AND MatKhau = @MatKhau;
+    WHERE
+        MatKhau = @MatKhau
+        AND (
+            CONVERT(VARCHAR(50), MaNhanVien) = @Username
+            OR Email = @Username
+        );
 END;
 GO
