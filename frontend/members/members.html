@@ -107,40 +107,11 @@
                 </tr>
             </thead>
             <tbody id="member-table-body">
-                <tr>
-                    <td><strong>VN5839</strong></td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Nam</td>
-                    <td>anh.nv261234@gmail.com</td>
-                    <td>0912345678</td>
-                    <td>15/06/2026</td>
-                    <td>15/06/2027</td>
-                    <td>0đ</td>
-                    <td><span class="status-badge status-active">Hoạt động</span></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editMember('VN5839')">Sửa (PUT)</button>
-                        <button class="btn btn-delete" onclick="deleteMember('VN5839')">Xóa</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>VN1024</strong></td>
-                    <td>Trần Thị B</td>
-                    <td>Nữ</td>
-                    <td>banti@gmail.com</td>
-                    <td>0988888888</td>
-                    <td>10/05/2026</td>
-                    <td>10/05/2027</td>
-                    <td>50,000đ</td>
-                    <td><span class="status-badge status-locked">Khóa</span></td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editMember('VN1024')">Sửa (PUT)</button>
-                        <button class="btn btn-delete" onclick="deleteMember('VN1024')">Xóa</button>
-                    </td>
-                </tr>
+                <!-- Rows will be populated dynamically from /api/members -->
             </tbody>
         </table>
     </div>
 
-    <script src="member.js"></script>
+    <script src="members.js"></script>
 </body>
 </html>
