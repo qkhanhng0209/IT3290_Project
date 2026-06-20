@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HUST Library - Đăng ký độc giả</title>
+    <title>HUST Library - Dang ky doc gia</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,12 +47,12 @@
             padding: 10px;
             border: 1px solid #cbd5e0;
             border-radius: 4px;
+            box-sizing: border-box;
         }
-        /* Nút Đăng ký màu Xanh lá theo ảnh mẫu */
         .btn-register {
             width: 100%;
             padding: 12px;
-            background-color: #2ecc71; /* Màu xanh lá */
+            background-color: #2ecc71;
             border: none;
             border-radius: 4px;
             color: white;
@@ -63,6 +63,10 @@
         }
         .btn-register:hover {
             background-color: #27ae60;
+        }
+        .btn-register:disabled {
+            background-color: #9ae6b4;
+            cursor: not-allowed;
         }
         .auth-switch {
             text-align: center;
@@ -79,8 +83,8 @@
             font-size: 12px;
             margin-top: 4px;
             display: block;
-            min-height: 15px; /* Giữ chỗ để giao diện không bị giật khi hiện chữ */
-}
+            min-height: 15px;
+        }
         .success-card {
             background: #edf7ed;
             color: #1e4620;
@@ -96,51 +100,54 @@
             color: #ff0000;
             margin-top: 5px;
         }
-        .hidden { display: none; }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
 <div class="auth-container">
     <div class="auth-header">
-        <h2>ĐĂNG KÝ ĐỘC GIẢ</h2>
-        <p>Hệ thống cấp mã tự động lần đầu</p>
+        <h2>DANG KY DOC GIA</h2>
+        <p>He thong cap ma tu dong tu MaDocGia IDENTITY(100001, 1)</p>
     </div>
 
     <div id="register-success" class="success-card hidden">
-        Đăng ký thành công! Mã độc giả của bạn là:
+        Dang ky thanh cong! Ma doc gia cua ban la:
         <div class="reader-id" id="assigned-id"></div>
     </div>
-    
-   <form onsubmit="handleRegister(event)">
-    <div class="form-group">
-        <label>Họ và tên</label>
-        <input type="text" id="reg-name" required placeholder="Nguyễn Văn A">
-        <span class="error-message" id="name-error"></span>
-    </div>
-    <div class="form-group">
-        <label>Địa chỉ Email</label>
-        <input type="email" id="reg-email" required placeholder="anh.nv261234@gmail.com">
-        <span class="error-message" id="email-error"></span> 
-    </div>
-    <div class="form-group">
-        <label>Số điện thoại</label>
-        <input type="tel" id="reg-phone" required placeholder="0912345678">
-        <span class="error-message" id="phone-error"></span>
-    </div>
-    <div class="form-group">
-        <label>Tạo mật khẩu</label>
-        <input type="password" id="reg-password" required placeholder="Tối thiểu 6 ký tự">
-        <span class="error-message" id="password-error"></span>
-    </div>
-    <button type="submit" class="btn-register">Đăng ký thông tin</button>
-</form>
-    
+
+    <form onsubmit="handleRegister(event)">
+        <div class="form-group">
+            <label>Ho va ten</label>
+            <input type="text" id="reg-name" required placeholder="Nguyen Van A">
+            <span class="error-message" id="name-error"></span>
+        </div>
+        <div class="form-group">
+            <label>Dia chi Email</label>
+            <input type="email" id="reg-email" required placeholder="anh.nv261234@gmail.com">
+            <span class="error-message" id="email-error"></span>
+        </div>
+        <div class="form-group">
+            <label>So dien thoai</label>
+            <input type="tel" id="reg-phone" required placeholder="0912345678">
+            <span class="error-message" id="phone-error"></span>
+        </div>
+        <div class="form-group">
+            <label>Tao mat khau</label>
+            <input type="password" id="reg-password" required placeholder="Toi thieu 6 ky tu">
+            <span class="error-message" id="password-error"></span>
+        </div>
+        <button type="submit" class="btn-register">Dang ky thong tin</button>
+    </form>
+
     <div class="auth-switch">
-        Đã có tài khoản? <a href="login.html">Quay lại Đăng nhập</a>
+        Da co tai khoan? <a href="login.html">Quay lai Dang nhap</a>
     </div>
 </div>
 
+<script src="../shared/api.js"></script>
 <script src="register.js"></script>
 </body>
 </html>
