@@ -5,48 +5,58 @@ function switchRole(role) {
 
     const tabs = document.querySelectorAll('.tab-btn');
     tabs.forEach(tab => tab.classList.remove('active'));
-    
+
     if (role === 'reader') {
         tabs[0].classList.add('active');
-        document.getElementById('account-label').innerText = "Tài khoản độc giả";
-        document.getElementById('login-account').placeholder = "Mã độc giả, Email hoặc SĐT";
-        document.getElementById('register-link-box').style.display = "block"; // Hiện dòng chữ đăng ký
+        document.getElementById('account-label').innerText = "Tai khoan doc gia";
+        document.getElementById('login-account').placeholder = "Ma doc gia, Email hoac SDT";
+        document.getElementById('register-link-box').style.display = "block";
     } else {
         tabs[1].classList.add('active');
-        document.getElementById('account-label').innerText = "Tài khoản nhân viên";
-        document.getElementById('login-account').placeholder = "Mã nhân viên (Staff ID) hoặc Email nội bộ";
-        document.getElementById('register-link-box').style.display = "none"; // Nhân viên không được tự đăng ký, ẩn đi
+        document.getElementById('account-label').innerText = "Tai khoan nhan vien";
+        document.getElementById('login-account').placeholder = "Ma nhan vien hoac Email noi bo";
+        document.getElementById('register-link-box').style.display = "none";
     }
 }
 
-
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
-    
+
     const account = document.getElementById('login-account').value.trim();
     const password = document.getElementById('login-password').value;
 
-    if (password.length < 6) {
-        alert("Mật khẩu phải từ 6 ký tự trở lên!");
-        return; 
+    if (!account || !password) {
+        alert("Vui long nhap tai khoan va mat khau!");
+        return;
     }
-    if (currentRole === 'reader') {
 
-        if (account.includes('@')) {
-            console.log("Độc giả đăng nhập bằng Email");
-        } else if (account.startsWith('VN')) { 
-            console.log("Độc giả đăng nhập bằng Mã độc giả");
-        } else {
-            console.log("Độc giả đăng nhập bằng Số điện thoại");
+    try {
+        const credentials = {
+            username: account,
+            password: password
+        };
+
+        const responseData = currentRole === 'reader'
+            ? await window.API.auth.loginReader(credentials)
+            : await window.API.auth.loginEmployee(credentials);
+        const authData = responseData?.user
+            ? responseData
+            : {
+                role: responseData?.role || (currentRole === 'reader' ? 'reader' : 'employee'),
+                user: responseData
+            };
+
+        if (!authData.user) {
+            throw new Error("Backend chua tra ve thong tin nguoi dung.");
         }
 
-        alert(`Độc giả đăng nhập thành công: ${account}`);
-        window.location.href = 'trang_chu.html'; 
+        localStorage.setItem("authUser", JSON.stringify(authData.user));
+        localStorage.setItem("authRole", authData.role);
 
-    } else {
-        console.log("Nhân viên/Quản lý đang đăng nhập");
-
-        alert(`Nhân viên đăng nhập thành công: ${account}`);
-        window.location.href = 'IT3290_Project/frontend/index.html';
+        alert(`Dang nhap thanh cong: ${account}`);
+        window.location.href = "../index.html";
+    } catch (error) {
+        console.error("Login error:", error);
+        alert(error.message || "Khong the ket noi den Backend. Vui long thu lai!");
     }
 }
