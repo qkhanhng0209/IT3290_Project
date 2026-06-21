@@ -344,3 +344,19 @@ BEGIN
         MaNhanVien DESC; -- Sắp xếp nhân viên mới tạo lên đầu (tùy chọn)
 END;
 GO
+GO
+CREATE PROCEDURE sp_GetNhanVienById
+    @MaNhanVien INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        MaNhanVien,
+        HoTen,
+        Email,
+        ChucVu
+    FROM NhanVien
+    WHERE MaNhanVien = @MaNhanVien;
+END
+GO
