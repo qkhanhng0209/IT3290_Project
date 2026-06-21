@@ -155,7 +155,7 @@ function addMemberClick() {
     form.reset();
     document.getElementById('modal-title').innerText = 'Thêm Độc Giả Mới';
     document.getElementById('modal-ma').innerText = '(Tự động tạo)';
-    document.getElementById('modal-ma').parentElement.style.display = 'none';
+    document.getElementById('ma-row').style.display = 'none';
     document.getElementById('btn-save-member').style.display = 'inline-block';
     document.getElementById('btn-save-member').dataset.mode = 'add';
     document.getElementById('member-modal').classList.add('active');
@@ -166,7 +166,7 @@ function editMember(id) {
         if (!member) return alert('Không tìm thấy độc giả!');
         document.getElementById('modal-title').innerText = 'Sửa Độc Giả';
         document.getElementById('modal-ma').innerText = member.MaDocGia;
-        document.getElementById('modal-ma').parentElement.style.display = 'block';
+    document.getElementById('ma-row').style.display = 'block';
         document.getElementById('modal-ho-ten').value = member.HoTen || '';
         document.getElementById('modal-gioi-tinh').value = member.GioiTinh || '';
         document.getElementById('modal-email').value = member.Email || '';
@@ -248,7 +248,7 @@ function addNhanvienClick() {
     form.reset();
     document.getElementById('nhanvien-modal-title').innerText = 'Thêm Nhân Viên Mới';
     document.getElementById('modal-nhanvien-ma').innerText = '(Tự động tạo)';
-    document.getElementById('modal-nhanvien-ma').parentElement.style.display = 'none';
+    document.getElementById('nhanvien-ma-row').style.display = 'none';
     document.getElementById('btn-save-nhanvien').style.display = 'inline-block';
     document.getElementById('btn-save-nhanvien').dataset.mode = 'add';
     document.getElementById('nhanvien-modal').classList.add('active');
@@ -259,7 +259,7 @@ function editNhanvien(id) {
         if (!nv) return alert('Không tìm thấy nhân viên!');
         document.getElementById('nhanvien-modal-title').innerText = 'Sửa Nhân Viên';
         document.getElementById('modal-nhanvien-ma').innerText = nv.MaNhanVien;
-        document.getElementById('modal-nhanvien-ma').parentElement.style.display = 'block';
+        document.getElementById('nhanvien-ma-row').style.display = 'block';
         document.getElementById('modal-nhanvien-ho-ten').value = nv.HoTen || '';
         document.getElementById('modal-nhanvien-email').value = nv.Email || '';
         document.getElementById('modal-nhanvien-chuc-vu').value = nv.ChucVu || 'NhanVien';
