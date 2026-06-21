@@ -18,9 +18,8 @@ BEGIN
     -- 1. NHẮC TRẢ SÁCH (Trước 2 ngày)
     -------------------------------------------------------------------
     -- Gửi thông báo cho những phiếu mượn chuẩn bị đến hạn
-    INSERT INTO ThongBao (MaDocGia, TieuDe, NoiDung, LoaiThongBao)
+    INSERT INTO ThongBao (MaDocGia, NoiDung, LoaiThongBao)
     SELECT DISTINCT pm.MaDocGia, 
-           N'Sắp đến hạn trả sách',
            N'Nhắc nhở: Sách bạn mượn sẽ đến hạn trả vào ngày ' + CONVERT(VARCHAR(10), ct.HanTra, 103) + N'. Vui lòng trả đúng hạn!', 
            N'NhacTraSach'
     FROM ChiTietPhieuMuon ct
@@ -31,9 +30,8 @@ BEGIN
     -- 2. CẢNH BÁO THẺ BỊ KHÓA
     -------------------------------------------------------------------
     -- Gửi cảnh báo cho các thẻ bị khóa (Chỉ gửi 1 lần trong ngày để không bị spam)
-    INSERT INTO ThongBao (MaDocGia, TieuDe, NoiDung, LoaiThongBao)
+    INSERT INTO ThongBao (MaDocGia, NoiDung, LoaiThongBao)
     SELECT MaDocGia, 
-           N'Thẻ độc giả đã bị khóa',
            N'Thẻ của bạn đã bị khóa do nợ quá hạn mức hoặc làm mất sách. Vui lòng đến nộp phạt để mở thẻ.', 
            N'KhoaThe'
     FROM DocGia
