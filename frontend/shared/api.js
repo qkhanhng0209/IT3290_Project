@@ -135,7 +135,11 @@ function updateNhanvien(maNhanVien, data) {
         body: JSON.stringify(data)
     });
 }
-
+function deleteNhanvien(maNhanVien) {
+    return apiRequest(`/nhanvien/${maNhanVien}`, {
+        method: "DELETE"
+    });
+}
 function getMemberById(maDocGia) {
     return apiRequest(`/members/${maDocGia}`);
 }
@@ -165,6 +169,7 @@ function activateMember(maDocGia) {
         method: "PUT"
     });
 }
+
 
 window.apiRequest = apiRequest;
 
@@ -197,6 +202,7 @@ window.API = {
         getNhanvien,
         getNhanvienById,
         addNhanvien,
-        updateNhanvien
+        updateNhanvien,
+        deleteNhanvien
     }
 };
