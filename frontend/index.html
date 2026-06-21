@@ -21,6 +21,48 @@
       
         document.getElementById('home-content-wrapper').style.display = 'block';
     }
+
+    function renderHeader() {
+        const authUser = localStorage.getItem('authUser');
+        const authRole = localStorage.getItem('authRole');
+        const rightDiv = document.querySelector('.header .right');
+
+        if (authUser && authRole) {
+            const user = JSON.parse(authUser);
+            let displayName = '';
+            let roleLabel = '';
+
+            if (authRole === 'reader') {
+                displayName = user.HoTen || user.hoTen || 'Độc giả';
+                roleLabel = 'Độc giả';
+            } else {
+                displayName = user.HoTen || user.hoTen || 'Nhân viên';
+                roleLabel = user.ChucVu || 'Nhân viên';
+            }
+
+            rightDiv.innerHTML = `
+                <div class="user-info">
+                    <span class="user-name">${displayName}</span>
+                    <span class="user-role">${roleLabel}</span>
+                </div>
+                <a href="#" onclick="handleLogout()" class="logout">Đăng xuất</a>
+            `;
+        } else {
+            rightDiv.innerHTML = `
+                <a href="auth/login.html" class="login">Đăng nhập</a>
+                <a href="auth/register.html" class="register">Đăng ký</a>
+            `;
+        }
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('authUser');
+        localStorage.removeItem('authRole');
+        renderHeader();
+        clickMenuHome();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderHeader);
 </script>
 
 <body>
@@ -37,10 +79,9 @@
                 <p>THƯ VIỆN VIỆT NAM</p>
             </div>
         </div>
-   <div class="right">
-    <a href="auth/login.html" class="login">Đăng nhập</a>
-    <a href="auth/register.html" class="register">Đăng ký</a>
-</div>
+    <div class="right">
+        <!-- Dynamic content rendered by renderHeader() -->
+    </div>
 </div>
 </header>
 
