@@ -323,3 +323,24 @@ BEGIN
     SELECT 'SUCCESS' AS Status, N'Xoa thong tin nhan vien thanh cong!' AS Message;
 END;
 GO
+USE QuanLyThuVien;
+GO
+
+CREATE OR ALTER PROCEDURE sp_GetAllNhanVien
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Lấy ra các thông tin hiển thị lên bảng giao diện
+    -- Không SELECT mật khẩu để bảo mật dữ liệu
+    SELECT 
+        MaNhanVien,
+        HoTen,
+        Email,
+        ChucVu
+    FROM 
+        NhanVien
+    ORDER BY 
+        MaNhanVien DESC; -- Sắp xếp nhân viên mới tạo lên đầu (tùy chọn)
+END;
+GO
