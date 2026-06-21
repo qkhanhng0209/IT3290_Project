@@ -49,9 +49,14 @@ async function handleLogin(event) {
         if (!authData.user) {
             throw new Error("Backend chua tra ve thong tin nguoi dung.");
         }
+        
+        const position = authData.user.ChucVu || authData.user.chucVu || "";
+        const normalizedRole = position.toLowerCase() === "quanly"
+            ? "manager"
+            : authData.role;
 
         localStorage.setItem("authUser", JSON.stringify(authData.user));
-        localStorage.setItem("authRole", authData.role);
+        localStorage.setItem("authRole", normalizedRole);
 
         alert(`Dang nhap thanh cong: ${account}`);
         window.location.href = "../index.html";

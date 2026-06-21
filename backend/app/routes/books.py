@@ -282,3 +282,114 @@ def delete_book(isbn):
         
     finally:
         conn.close()
+
+# Lấy danh sách cuốn sách vật lý của một đầu sách
+# GET /api/books/<isbn>/copies
+@books_bp.route("/api/books/<isbn>/copies", methods=["GET"])
+def get_book_copies(isbn):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("EXEC sp_GetBookCopiesByISBN ?", (isbn,))
+        rows = cursor.fetchall()
+
+        copies = []
+        for row in rows:
+            copies.append({
+                "ma_sach": row.MaSach,
+                "isbn": row.ISBN,
+                "tinh_trang": row.TinhTrang,
+                "he_so_den_bu": float(row.HeSoDenBu)
+            })
+
+        return success(data=copies)
+
+    except Exception as e:
+        return error(str(e), 500)
+
+    finally:
+        conn.close()
+
+# Thêm cuốn sách vật lý cho một đầu sách đã tồn tại
+# POST /api/books/<isbn>/copies
+@books_bp.route("/api/books/<isbn>/copies", methods=["POST"])
+def add_book_copies(isbn):
+    data = request.get_json()
+
+    if not data:
+        return error("Dữ liệu gửi lên không hợp lệ", 400)
+
+    so_luong = data.get("so_luong")
+    tinh_trang = data.get("tinh_trang", "Tot")
+    he_so_den_bu = data.get("he_so_den_bu", 1.2)
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "EXEC sp_AddBookCopies ?, ?, ?, ?",
+            (isbn, so_luong, tinh_trang, he_so_den_bu)
+        )
+
+        row = cursor.fetchone()
+        conn.commit()
+
+        so_cuon_da_them = row.SoCuonDaThem if row else so_luong
+
+        return success(
+            data={"so_cuon_da_them": so_cuon_da_them},
+            message="Thêm cuốn sách vật lý thành công",
+            status=201
+        )
+
+    except Exception as e:
+        conn.rollback()
+        return error(str(e), 400)
+
+    finally:
+        conn.close()
+
+# Cập nhật tình trạng và hệ số đền bù của một cuốn sách vật lý
+# PUT /api/books/copies/<ma_sach>
+@books_bp.route("/api/books/copies/<int:ma_sach>", methods=["PUT"])
+def update_book_copy(ma_sach):
+    data = request.get_json()
+
+    if not data:
+        return error("Dữ liệu gửi lên không hợp lệ", 400)
+
+    tinh_trang = data.get("tinh_trang")
+    he_so_den_bu = data.get("he_so_den_bu", 1.2)
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "EXEC sp_UpdateBookCopy ?, ?, ?",
+            (ma_sach, tinh_trang, he_so_den_bu)
+        )
+        row = cursor.fetchone()
+        conn.commit()
+
+        if row is None:
+            return error("Không tìm thấy cuốn sách vật lý", 404)
+
+        return success(
+            data={
+                "ma_sach": row.MaSach,
+                "isbn": row.ISBN,
+                "tinh_trang": row.TinhTrang,
+                "he_so_den_bu": float(row.HeSoDenBu)
+            },
+            message="Cập nhật cuốn sách vật lý thành công"
+        )
+
+    except Exception as e:
+        conn.rollback()
+        return error(str(e), 400)
+
+    finally:
+        conn.close()

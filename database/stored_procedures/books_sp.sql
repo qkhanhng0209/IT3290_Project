@@ -2,7 +2,7 @@ USE QuanLyThuVien
 GO
 
 -- Tạo sp GetBooks
-CREATE PROCEDURE sp_GetBooks
+CREATE OR ALTER PROCEDURE sp_GetBooks
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -13,7 +13,7 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE sp_GetBooksByISBN
+CREATE OR ALTER PROCEDURE sp_GetBooksByISBN
 	@ISBN VARCHAR(20)
 AS
 BEGIN
@@ -244,6 +244,118 @@ BEGIN
 
 	DELETE FROM TheLoai_DauSach
 	WHERE ISBN = @ISBN
+END
+GO
+
+-- SP lấy danh sách các cuốn sách vật lý thuộc một đầu sách
+CREATE OR ALTER PROCEDURE sp_GetBookCopiesByISBN
+	@ISBN VARCHAR(20)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT
+		MaSach,
+		ISBN,
+		TinhTrang,
+		HeSoDenBu
+	FROM CuonSach
+	WHERE ISBN = @ISBN
+	ORDER BY MaSach;
+END
+GO
+
+-- SP thêm các cuốn sách vật lý cho một đầu sách đã tồn tại
+CREATE OR ALTER PROCEDURE sp_AddBookCopies
+	@ISBN VARCHAR(20),
+	@SoLuong INT,
+	@TinhTrang NVARCHAR(20) = N'Tot',
+	@HeSoDenBu DECIMAL(4,2) = 1.2
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF NOT EXISTS (
+		SELECT 1
+		FROM DauSach
+		WHERE ISBN = @ISBN
+	)
+	BEGIN
+		THROW 50003, N'Khong tim thay dau sach de them cuon sach vat ly!', 1;
+	END;
+
+	IF @SoLuong IS NULL OR @SoLuong <= 0
+	BEGIN
+		THROW 50004, N'So luong cuon sach phai lon hon 0!', 1;
+	END;
+
+	IF @TinhTrang NOT IN (N'Tot', N'HongNhe', N'HongNang', N'Mat', N'DangMuon')
+	BEGIN
+		THROW 50005, N'Tinh trang cuon sach khong hop le!', 1;
+	END;
+
+	IF @HeSoDenBu IS NULL OR @HeSoDenBu < 1
+	BEGIN
+		THROW 50006, N'He so den bu phai lon hon hoac bang 1!', 1;
+	END;
+
+	;WITH Numbers AS (
+		SELECT 1 AS n
+		UNION ALL
+		SELECT n + 1
+		FROM Numbers
+		WHERE n < @SoLuong
+	)
+	INSERT INTO CuonSach(ISBN, TinhTrang, HeSoDenBu)
+	SELECT @ISBN, @TinhTrang, @HeSoDenBu
+	FROM Numbers
+	OPTION (MAXRECURSION 1000);
+
+	SELECT @@ROWCOUNT AS SoCuonDaThem;
+END
+GO
+
+-- SP cập nhật tình trạng và hệ số đền bù của một cuốn sách vật lý
+CREATE OR ALTER PROCEDURE sp_UpdateBookCopy
+	@MaSach INT,
+	@TinhTrang NVARCHAR(20),
+	@HeSoDenBu DECIMAL(4,2)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF NOT EXISTS (
+		SELECT 1
+		FROM CuonSach
+		WHERE MaSach = @MaSach
+	)
+	BEGIN
+		THROW 50007, N'Khong tim thay cuon sach vat ly!', 1;
+	END;
+
+	IF @TinhTrang NOT IN (N'Tot', N'HongNhe', N'HongNang', N'Mat', N'DangMuon')
+	BEGIN
+		THROW 50008, N'Tinh trang cuon sach khong hop le!', 1;
+	END;
+
+	IF @HeSoDenBu IS NULL OR @HeSoDenBu < 1
+	BEGIN
+		THROW 50009, N'He so den bu phai lon hon hoac bang 1!', 1;
+	END;
+
+	UPDATE CuonSach
+	SET
+		TinhTrang = @TinhTrang,
+		HeSoDenBu = @HeSoDenBu
+	WHERE MaSach = @MaSach;
+
+	SELECT
+		MaSach,
+		ISBN,
+		TinhTrang,
+		HeSoDenBu
+	FROM CuonSach
+	WHERE MaSach = @MaSach;
 END
 GO
 

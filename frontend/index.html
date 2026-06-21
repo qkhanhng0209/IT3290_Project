@@ -7,7 +7,52 @@
 </head>
 
 <script>
+    function isLoggedIn() {
+        return Boolean(localStorage.getItem('authUser') && localStorage.getItem('authRole'));
+    }
+
+    function showLoginRequired() {
+        document.getElementById('main-iframe').style.display = 'none';
+        document.getElementById('main-iframe').src = '';
+        document.getElementById('home-content-wrapper').style.display = 'none';
+
+        let notice = document.getElementById('login-required-notice');
+
+        if (!notice) {
+            notice = document.createElement('div');
+            notice.id = 'login-required-notice';
+            notice.style.background = '#fff';
+            notice.style.border = '1px solid #e5e7eb';
+            notice.style.borderRadius = '6px';
+            notice.style.padding = '24px';
+            notice.style.textAlign = 'center';
+            notice.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
+            notice.innerHTML = `
+                <h2>Vui lòng đăng nhập</h2>
+                <p>Bạn cần đăng nhập để xem sách và thống kê thư viện.</p>
+                <a href="auth/login.html" class="login">Đăng nhập</a>
+            `;
+
+            document.querySelector('.main').insertBefore(
+                notice,
+                document.getElementById('main-iframe')
+            );
+        }
+
+        notice.style.display = 'block';
+    }
+
     function clickMenuPage(url) {
+        if ((url === 'books/books.html' || url === 'reports/reports.html') && !isLoggedIn()) {
+            showLoginRequired();
+            return;
+        }
+
+        const notice = document.getElementById('login-required-notice');
+        if (notice) {
+            notice.style.display = 'none';
+        }
+
         document.getElementById('home-content-wrapper').style.display = 'none';
         
         const iframe = document.getElementById('main-iframe');
@@ -18,6 +63,10 @@
     function clickMenuHome() {
         document.getElementById('main-iframe').style.display = 'none';
         document.getElementById('main-iframe').src = ''; 
+        const notice = document.getElementById('login-required-notice');
+        if (notice) {
+            notice.style.display = 'none';
+        }
       
         document.getElementById('home-content-wrapper').style.display = 'block';
     }

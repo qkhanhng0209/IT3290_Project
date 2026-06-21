@@ -56,7 +56,9 @@
         .search-box input,
         .search-box select,
         .book-form input,
-        .book-form textarea {
+        .book-form textarea,
+        .copy-form input,
+        .copy-form select {
             border: 1px solid #d1d5db;
             border-radius: 4px;
             padding: 10px;
@@ -142,6 +144,42 @@
         .book-form {
             display: grid;
             gap: 12px;
+        }
+
+        .copy-panel {
+            margin-top: 16px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 14px;
+        }
+
+        .copy-panel[hidden] {
+            display: none;
+        }
+
+        .copy-form {
+            display: grid;
+            gap: 12px;
+        }
+
+        .copies-panel {
+            margin-top: 16px;
+        }
+
+        .copies-panel[hidden] {
+            display: none;
+        }
+
+        .copy-status-select,
+        .copy-compensation-input {
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 14px;
+            background: #ffffff;
+        }
+
+        .copy-compensation-input {
+            width: 90px;
         }
 
         .field {
@@ -329,6 +367,38 @@
                         <button class="btn btn-warning" id="cancelEditBtn" type="button">Hủy</button>
                     </div>
                 </form>
+
+                <section id="copyPanel" class="copy-panel" hidden>
+                    <h2>Thêm cuốn sách</h2>
+                    <p id="copyTarget" class="muted"></p>
+
+                    <form id="copyForm" class="copy-form">
+                        <div class="field">
+                            <label for="copyQuantity">Số lượng cuốn</label>
+                            <input id="copyQuantity" name="so_luong" type="number" min="1" max="1000" value="1" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="copyStatus">Tình trạng ban đầu</label>
+                            <select id="copyStatus" name="tinh_trang">
+                                <option value="Tot">Tốt</option>
+                                <option value="HongNhe">Hỏng nhẹ</option>
+                                <option value="HongNang">Hỏng nặng</option>
+                                <option value="Mat">Mất</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="copyCompensation">Hệ số đền bù</label>
+                            <input id="copyCompensation" name="he_so_den_bu" type="number" min="1" step="0.1" value="1.2" required>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-success" type="submit">Thêm cuốn</button>
+                            <button class="btn btn-warning" id="cancelCopyBtn" type="button">Hủy</button>
+                        </div>
+                    </form>
+                </section>
             </aside>
 
             <section class="panel">
@@ -356,6 +426,30 @@
                         </tbody>
                     </table>
                 </div>
+
+                <section id="copiesPanel" class="copies-panel" hidden>
+                    <h2>Danh sách cuốn vật lý</h2>
+                    <p id="copiesTitle" class="muted"></p>
+
+                    <div class="table-wrap">
+                        <table class="books-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã cuốn</th>
+                                    <th>ISBN</th>
+                                    <th>Tình trạng</th>
+                                    <th>Hệ số đền bù</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="copiesTableBody">
+                                <tr>
+                                    <td colspan="5">Chọn một đầu sách để xem các cuốn vật lý.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </section>
         </section>
     </main>

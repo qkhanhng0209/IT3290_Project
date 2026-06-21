@@ -68,6 +68,24 @@ function deleteBook(isbn) {
     });
 }
 
+function getBookCopies(isbn) {
+    return apiRequest(`/books/${encodeURIComponent(isbn)}/copies`);
+}
+
+function addBookCopies(isbn, copies) {
+    return apiRequest(`/books/${encodeURIComponent(isbn)}/copies`, {
+        method: "POST",
+        body: JSON.stringify(copies)
+    });
+}
+
+function updateBookCopy(maSach, copy) {
+    return apiRequest(`/books/copies/${encodeURIComponent(maSach)}`, {
+        method: "PUT",
+        body: JSON.stringify(copy)
+    });
+}
+
 function loginReader(credentials) {
     return apiRequest("/auth/login-reader", {
         method: "POST",
@@ -138,7 +156,10 @@ window.API = {
         searchBooks,
         addBook,
         updateBook,
-        deleteBook
+        deleteBook,
+        getBookCopies,
+        addBookCopies,
+        updateBookCopy
     },
     members: {
         getMembers,

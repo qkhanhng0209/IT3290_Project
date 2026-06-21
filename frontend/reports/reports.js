@@ -15,6 +15,10 @@ const inventoryReportBody = document.querySelector("#inventoryReportBody");
 const topBooksReportBody = document.querySelector("#topBooksReportBody");
 const topReadersReportBody = document.querySelector("#topReadersReportBody");
 
+function isLoggedIn() {
+    return Boolean(localStorage.getItem("authUser") && localStorage.getItem("authRole"));
+}
+
 function showMessage(type, text) {
     reportMessage.className = `message ${type}`;
     reportMessage.textContent = text;
@@ -179,6 +183,22 @@ function setAllLoading() {
 }
 
 async function loadReports() {
+    if (!isLoggedIn()) {
+        setEmpty(categoryReportBody, 3);
+        setEmpty(publisherReportBody, 3);
+        setEmpty(authorReportBody, 3);
+        setEmpty(inventoryReportBody, 8);
+        setEmpty(topBooksReportBody, 3);
+        setEmpty(topReadersReportBody, 3);
+
+        totalTitles.textContent = "-";
+        totalCopies.textContent = "-";
+        borrowedCopies.textContent = "-";
+        damagedCopies.textContent = "-";
+        showMessage("error", "Vui lòng đăng nhập để xem thống kê thư viện.");
+        return;
+    }
+
     hideMessage();
     setAllLoading();
 
