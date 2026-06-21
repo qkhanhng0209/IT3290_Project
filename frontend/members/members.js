@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     loadMembers();
+    loadNhanvien();
 });
 
 // Load all members from API using shared API
@@ -78,6 +79,39 @@ function formatDate(d) {
     const dt = new Date(d);
     if (isNaN(dt)) return d;
     return dt.toLocaleDateString('vi-VN');
+}
+
+// Load all employees from API using shared API
+async function loadNhanvien() {
+    try {
+        const nhanvienList = await API.nhanvien.getNhanvien();
+        renderNhanvien(nhanvienList);
+    } catch (err) {
+        console.error('Không thể tải danh sách nhân viên:', err);
+        const tbody = document.getElementById('nhanvien-table-body');
+        tbody.innerHTML = `<tr><td colspan="4">Lỗi khi tải dữ liệu nhân viên: ${err.message}</td></tr>`;
+    }
+}
+
+function renderNhanvien(list) {
+    const tbody = document.getElementById('nhanvien-table-body');
+    tbody.innerHTML = '';
+
+    if (!Array.isArray(list) || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4">Chưa có nhân viên nào.</td></tr>';
+        return;
+    }
+
+    list.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${item.MaNhanVien}</strong></td>
+            <td>${escapeHtml(item.HoTen || '')}</td>
+            <td>${escapeHtml(item.Email || '')}</td>
+            <td>${escapeHtml(item.ChucVu || '')}</td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
 function escapeHtml(str) {
