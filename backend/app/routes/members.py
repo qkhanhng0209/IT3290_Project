@@ -5,20 +5,25 @@ members_bp = Blueprint('members', __name__, url_prefix='/api/members')
 
 @members_bp.route('/', methods=['GET'])
 def get_all_members():
-    conn = get_connection()  # Đã sửa
+    conn = get_connection()
     cursor = conn.cursor()
-    
-    cursor.execute("EXEC sp_GetAllDocGia")
-    rows = cursor.fetchall()
-    
-    columns = [column[0] for column in cursor.description]
-    members_list = []
-    
-    for row in rows:
-        members_list.append(dict(zip(columns, row)))
-        
-    conn.close()
-    return jsonify(members_list), 200
+
+    try:
+        cursor.execute("EXEC sp_GetAllDocGia")
+        rows = cursor.fetchall()
+
+        columns = [column[0] for column in cursor.description]
+        members_list = []
+
+        for row in rows:
+            members_list.append(dict(zip(columns, row)))
+
+        return jsonify(members_list), 200
+    except Exception as e:
+        error_msg = str(e).split(']')[-1].strip()
+        return jsonify({"message": error_msg}), 400
+    finally:
+        conn.close()
 
 @members_bp.route('/<string:ma_doc_gia>', methods=['GET'])
 def get_member_by_id(ma_doc_gia):
@@ -94,7 +99,7 @@ def activate_member(ma_doc_gia):
 
 nhanvien_bp = Blueprint('nhanvien', __name__, url_prefix='/api/nhanvien')
 
-@nhanvien_bp.route('/', methods=['GET'])
+@nhanvien_bp.route('/', methods=['GET'], strict_slashes=False)
 def get_all_nhanvien():
     conn = get_connection()
     cursor = conn.cursor()
@@ -116,7 +121,7 @@ def get_all_nhanvien():
     finally:
         conn.close()
 
-@nhanvien_bp.route('/<int:ma_nhan_vien>', methods=['GET'])
+@nhanvien_bp.route('/<int:ma_nhan_vien>', methods=['GET'], strict_slashes=False)
 def get_nhanvien_by_id(ma_nhan_vien):
     conn = get_connection()
     cursor = conn.cursor()
@@ -139,7 +144,7 @@ def get_nhanvien_by_id(ma_nhan_vien):
         conn.close()
 
 
-@nhanvien_bp.route('/info/<int:ma_nhan_vien>', methods=['GET'])
+@nhanvien_bp.route('/info/<int:ma_nhan_vien>', methods=['GET'], strict_slashes=False)
 def get_nhanvien_info(ma_nhan_vien):
     conn = get_connection()
     cursor = conn.cursor()
