@@ -309,7 +309,7 @@ function closeNhanvienModal() {
 async function deleteNhanvien(id) {
     if (!confirm(`Bạn có chắc chắn muốn xóa nhân viên ${id}?`)) return;
     try {
-        await API.apiRequest(`/nhanvien/${id}`, { method: 'DELETE' });
+        await API.nhanvien.deleteNhanvien(id);
         alert('Xóa thành công');
         loadNhanvien();
     } catch (err) {
