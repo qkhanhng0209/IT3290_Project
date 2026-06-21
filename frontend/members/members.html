@@ -180,20 +180,38 @@
             <h2 id="modal-title">Thông tin Độc Giả</h2>
             <form id="member-form" onsubmit="return false;">
                 <div class="modal-info">
-                    <strong>Mã:</strong> <span id="modal-ma"></span><br>
-                    <strong>Họ và Tên:</strong> <input id="modal-ho-ten" type="text" placeholder="Họ và Tên"><br>
-                    <strong>Giới Tính:</strong> <input id="modal-gioi-tinh" type="text" placeholder="Giới Tính"><br>
-                    <strong>Email:</strong> <input id="modal-email" type="email" placeholder="Email"><br>
-                    <strong>Số Điện Thoại:</strong> <input id="modal-sdt" type="text" placeholder="Số Điện Thoại"><br>
-                    <strong>Ngày Cấp Thẻ:</strong> <input id="modal-ngay-cap-the" type="date"><br>
-                    <strong>Ngày Hết Hạn:</strong> <input id="modal-ngay-het-han" type="date"><br>
-                    <strong>Tổng Nợ:</strong> <span id="modal-tong-no">0</span><br>
-                    <strong>Trạng Thái Thẻ:</strong>
-                    <select id="modal-trang-thai">
-                        <option value="Hoat Dong">Hoạt động</option>
-                        <option value="HetHan">Hết hạn</option>
-                        <option value="Bi khoa">Khóa</option>
-                    </select>
+                    <div id="ma-row">
+                        <strong>Mã:</strong> <span id="modal-ma"></span><br>
+                    </div>
+                    <div id="ho-ten-row">
+                        <strong>Họ và Tên:</strong> <input id="modal-ho-ten" type="text" placeholder="Họ và Tên"><br>
+                    </div>
+                    <div id="gioi-tinh-row">
+                        <strong>Giới Tính:</strong> <input id="modal-gioi-tinh" type="text" placeholder="Giới Tính"><br>
+                    </div>
+                    <div id="email-row">
+                        <strong>Email:</strong> <input id="modal-email" type="email" placeholder="Email"><br>
+                    </div>
+                    <div id="sdt-row">
+                        <strong>Số Điện Thoại:</strong> <input id="modal-sdt" type="text" placeholder="Số Điện Thoại"><br>
+                    </div>
+                    <div id="ngay-cap-the-row">
+                        <strong>Ngày Cấp Thẻ:</strong> <input id="modal-ngay-cap-the" type="date"><br>
+                    </div>
+                    <div id="ngay-het-han-row">
+                        <strong>Ngày Hết Hạn:</strong> <input id="modal-ngay-het-han" type="date"><br>
+                    </div>
+                    <div id="tong-no-row">
+                        <strong>Tổng Nợ:</strong> <span id="modal-tong-no">0</span><br>
+                    </div>
+                    <div id="trang-thai-row">
+                        <strong>Trạng Thái Thẻ:</strong>
+                        <select id="modal-trang-thai">
+                            <option value="Hoat Dong">Hoạt động</option>
+                            <option value="HetHan">Hết hạn</option>
+                            <option value="Bi khoa">Khóa</option>
+                        </select>
+                    </div>
                 </div>
                 <button class="modal-close-btn" id="btn-save-member" type="button" onclick="saveMember()">Lưu</button>
                 <button class="modal-close-btn" type="button" onclick="closeMemberModal()">Đóng</button>
@@ -207,14 +225,22 @@
             <h2 id="nhanvien-modal-title">Thông tin Nhân Viên</h2>
             <form id="nhanvien-form" onsubmit="return false;">
                 <div class="modal-info">
-                    <strong>Mã:</strong> <span id="modal-nhanvien-ma"></span><br>
-                    <strong>Họ và Tên:</strong> <input id="modal-nhanvien-ho-ten" type="text" placeholder="Họ và Tên"><br>
-                    <strong>Email:</strong> <input id="modal-nhanvien-email" type="email" placeholder="Email"><br>
-                    <strong>Chức vụ:</strong>
-                    <select id="modal-nhanvien-chuc-vu">
-                        <option value="NhanVien">Nhân viên</option>
-                        <option value="QuanLy">Quản lý</option>
-                    </select>
+                    <div id="nhanvien-ma-row">
+                        <strong>Mã:</strong> <span id="modal-nhanvien-ma"></span><br>
+                    </div>
+                    <div id="nhanvien-ho-ten-row">
+                        <strong>Họ và Tên:</strong> <input id="modal-nhanvien-ho-ten" type="text" placeholder="Họ và Tên"><br>
+                    </div>
+                    <div id="nhanvien-email-row">
+                        <strong>Email:</strong> <input id="modal-nhanvien-email" type="email" placeholder="Email"><br>
+                    </div>
+                    <div id="nhanvien-chuc-vu-row">
+                        <strong>Chức vụ:</strong>
+                        <select id="modal-nhanvien-chuc-vu">
+                            <option value="NhanVien">Nhân viên</option>
+                            <option value="QuanLy">Quản lý</option>
+                        </select>
+                    </div>
                 </div>
                 <button class="modal-close-btn" id="btn-save-nhanvien" type="button" onclick="saveNhanvien()">Lưu</button>
                 <button class="modal-close-btn" type="button" onclick="closeNhanvienModal()">Đóng</button>
