@@ -1,11 +1,13 @@
 const BASE_URL = window.API_BASE_URL || "/api";
 
 async function apiRequest(path, options = {}) {
+    const authRole = typeof localStorage !== 'undefined' ? localStorage.getItem('authRole') : null;
     const requestOptions = {
         ...options,
         method: options.method || "GET",
         headers: {
             "Content-Type": "application/json",
+            ...(authRole ? { "X-Auth-Role": authRole } : {}),
             ...(options.headers || {})
         }
     };
@@ -120,6 +122,20 @@ function getNhanvienById(ma_nhan_vien) {
     return apiRequest(`/nhanvien/${ma_nhan_vien}`);
 }
 
+function addNhanvien(data) {
+    return apiRequest("/nhanvien", {
+        method: "POST",
+        body: JSON.stringify(data)
+    });
+}
+
+function updateNhanvien(maNhanVien, data) {
+    return apiRequest(`/nhanvien/${maNhanVien}`, {
+        method: "PUT",
+        body: JSON.stringify(data)
+    });
+}
+
 function getMemberById(maDocGia) {
     return apiRequest(`/members/${maDocGia}`);
 }
@@ -179,6 +195,8 @@ window.API = {
     },
     nhanvien: {
         getNhanvien,
-        getNhanvienById
+        getNhanvienById,
+        addNhanvien,
+        updateNhanvien
     }
 };
