@@ -104,7 +104,7 @@ CREATE TABLE PhieuMuon(
 CREATE TABLE ChiTietPhieuMuon(
 	MaPhieuMuon INT NOT NULL FOREIGN KEY REFERENCES PhieuMuon(MaPhieuMuon),
 	MaSach INT NOT NULL FOREIGN KEY REFERENCES CuonSach(MaSach),
-	HanTra DATE NOT NULL,
+	HanTra DATE,
 	NgayTra DATE,
 	TinhTrangTra NVARCHAR(50)
 		CHECK (TinhTrangTra IN (N'BinhThuong', N'HongNhe', N'HongNang', N'Mat')),
