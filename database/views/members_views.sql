@@ -1,5 +1,5 @@
 USE QuanLyThuVien
-GO
+GO 
 
 CREATE VIEW vw_DocGiaInfo
 AS
@@ -24,4 +24,19 @@ SELECT
         ELSE NULL
     END AS SoNgayConLai
 FROM DocGia;
+GO
+
+CREATE VIEW vw_NhanVienInfo
+AS
+SELECT
+    MaNhanVien,
+    HoTen,
+    Email,
+    ChucVu,
+    CASE
+        WHEN ChucVu = 'QuanLy' THEN N'Quản lý'
+        WHEN ChucVu = 'NhanVien' THEN N'Nhân viên'
+        ELSE ChucVu
+    END AS ChucVuText
+FROM NhanVien;
 GO
