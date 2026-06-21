@@ -12,6 +12,7 @@ def register_reader():
     ho_ten = data.get('hoTen')
     email = data.get('email')
     so_dien_thoai = data.get('soDienThoai')
+    gioi_tinh = data.get('gioiTinh')
 
     if not all([mat_khau, ho_ten, email, so_dien_thoai]):
         return error("Thieu thong tin dang ky", 400)
@@ -21,8 +22,8 @@ def register_reader():
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "EXEC sp_RegisterDocGia @MatKhau=?, @HoTen=?, @Email=?, @SoDienThoai=?",
-            (mat_khau, ho_ten, email, so_dien_thoai)
+            "EXEC sp_RegisterDocGia @MatKhau=?, @HoTen=?, @Email=?, @SoDienThoai=?, @GioiTinh=?",
+            (mat_khau, ho_ten, email, so_dien_thoai, gioi_tinh)
         )
         row = cursor.fetchone()
         conn.commit()
