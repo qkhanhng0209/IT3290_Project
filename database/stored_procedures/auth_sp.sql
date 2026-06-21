@@ -5,7 +5,8 @@ CREATE OR ALTER PROCEDURE sp_RegisterDocGia
     @MatKhau VARCHAR(100),
     @HoTen NVARCHAR(100),
     @Email VARCHAR(100),
-    @SoDienThoai VARCHAR(15)
+    @SoDienThoai VARCHAR(15),
+    @GioiTinh NVARCHAR(10) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -45,7 +46,7 @@ BEGIN
     VALUES (
         @MatKhau,
         @HoTen,
-        NULL,
+        @GioiTinh,
         @Email,
         @SoDienThoai,
         CAST(GETDATE() AS DATE),
