@@ -54,6 +54,7 @@ async function handleRegister(event) {
     const email = document.getElementById('reg-email').value.trim();
     const phone = document.getElementById('reg-phone').value.trim();
     const password = document.getElementById('reg-password').value;
+    const gender = document.querySelector('input[name="reg-gender"]:checked')?.value || null;
 
     const isNameValid = validateName();
     const isEmailValid = validateEmail();
@@ -75,7 +76,8 @@ async function handleRegister(event) {
         hoTen: hoTen,
         email: email,
         soDienThoai: phone,
-        matKhau: password
+        matKhau: password,
+        gioiTinh: gender
     };
 
     const submitButton = event.target.querySelector('button[type="submit"]');
