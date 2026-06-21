@@ -1,4 +1,4 @@
-const BASE_URL = window.API_BASE_URL || "http://localhost:5000/api";
+const BASE_URL = window.API_BASE_URL || "/api";
 
 async function apiRequest(path, options = {}) {
     const requestOptions = {
@@ -112,6 +112,14 @@ function getMembers() {
     return apiRequest("/members");
 }
 
+function getNhanvien() {
+    return apiRequest("/nhanvien");
+}
+
+function getNhanvienById(ma_nhan_vien) {
+    return apiRequest(`/nhanvien/${ma_nhan_vien}`);
+}
+
 function getMemberById(maDocGia) {
     return apiRequest(`/members/${maDocGia}`);
 }
@@ -168,5 +176,9 @@ window.API = {
         updateMember,
         deleteMember,
         activateMember
+    },
+    nhanvien: {
+        getNhanvien,
+        getNhanvienById
     }
 };
