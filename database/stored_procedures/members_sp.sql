@@ -164,6 +164,33 @@ BEGIN
 END;
 GO
 
+CREATE OR ALTER PROCEDURE sp_GetDocGiaInfo
+    @MaDocGia INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF NOT EXISTS (SELECT 1 FROM DocGia WHERE MaDocGia = @MaDocGia)
+    BEGIN
+        RAISERROR(N'Khong tim thay doc gia!', 16, 1);
+        RETURN;
+    END
+
+    SELECT
+        MaDocGia,
+        HoTen,
+        GioiTinh,
+        Email,
+        SoDienThoai,
+        NgayCapThe,
+        NgayHetHan,
+        TongNo,
+        TrangThaiThe
+    FROM DocGia
+    WHERE MaDocGia = @MaDocGia;
+END;
+GO
+
 CREATE OR ALTER PROCEDURE sp_ActivateDocGia
     @MaDocGia INT
 AS
