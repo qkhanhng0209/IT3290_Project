@@ -163,13 +163,11 @@ function deleteMember(maDocGia) {
         method: "DELETE"
     });
 }
-
 function activateMember(maDocGia) {
-    return apiRequest(`/members/${maDocGia}/activate`, {
+    return apiRequest(`/members/activate/${maDocGia}`, {
         method: "PUT"
     });
 }
-
 
 window.apiRequest = apiRequest;
 
